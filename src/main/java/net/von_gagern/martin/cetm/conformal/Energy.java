@@ -17,14 +17,23 @@ class Energy implements Functional {
 
     private final Collection<Angle> angles;
 
+    private final int size;
+
     public Energy(InternalMesh mesh) {
         vertices = mesh.getVertices();
         edges = mesh.getEdges();
         angles = mesh.getAngles();
+
+        int index = 0;
+        for (Vertex v: vertices) {
+            if (v.isFixed()) v.setIndex(-1);
+            else v.setIndex(index++);
+        }
+        size = index;
     }
 
     public int getInputDimension() {
-        return vertices.size();
+        return size;
     }
 
     public void setArgument(Vector u) {
