@@ -7,6 +7,7 @@ import no.uib.cipr.matrix.Vector;
 import no.uib.cipr.matrix.sparse.CG;
 import no.uib.cipr.matrix.sparse.IterativeSolver;
 import no.uib.cipr.matrix.sparse.IterativeSolverNotConvergedException;
+import org.apache.log4j.Logger;
 
 public class Newton implements Callable<Vector> {
 
@@ -45,6 +46,8 @@ public class Newton implements Callable<Vector> {
     }
 
     private static final double EPSILON = 1e-14;
+
+    private final Logger logger = Logger.getLogger(Newton.class);
 
     private final Functional f;
 
@@ -96,10 +99,13 @@ public class Newton implements Callable<Vector> {
         if (startingPoint != null)
             x.set(startingPoint);
 
+        logger.debug("Starting optimization");
         f.setArgument(x);                             // working on f(x) now
         for (int i = 1; i <= maxIterations; ++i) {
+            logger.debug("Iteration " + i);
             g = f.gradient(g);                        // g = ∇f(x)
             double gradNormValue = g.norm(gradNorm);
+            logger.debug("Gradient norm: " + gradNormValue);
             if (gradNormValue <= gradEpsilon) {
                 setExitCondition(ExitCondition.GRADIENT, gradNormValue);
                 return argmin = x;
@@ -107,8 +113,10 @@ public class Newton implements Callable<Vector> {
             h = f.hessian(h);                         // h = ∇²f(x)
             g = g.scale(-1);                          // g = -∇f(x)
             double v = f.value();                     // v = f(x)
+            logger.debug("Function value: " + v);
             delta = solver.solve(h, g, delta.zero()); // h*Δ = g
             double lamdaSq = g.dot(delta);            // λ² = <g, Δ>
+            logger.debug("lambda^2: " + lamdaSq);
             if (lamdaSq/2 <= estimateEpsilon) {
                 setExitCondition(ExitCondition.ESTIMATE, lamdaSq/2);
                 return argmin = x;
@@ -116,7 +124,9 @@ public class Newton implements Callable<Vector> {
 
             // Backtracking line search
             double deltaNormValue = delta.norm(deltaNorm);
+            logger.debug("Delta norm: " + deltaNormValue);
             for (double t = 1; true; t *= beta) {
+                logger.debug("Line search t: " + t);
                 if (t*deltaNormValue <= deltaEpsilon) {
                     setExitCondition(ExitCondition.DELTA, t*deltaNormValue);
                     return argmin = x;
@@ -139,6 +149,7 @@ public class Newton implements Callable<Vector> {
     }
 
     private void setExitCondition(ExitCondition condition, double error) {
+        logger.info("Condition: " + condition +", error: " + error);
         exitCondition = condition;
         exitError = error;
     }

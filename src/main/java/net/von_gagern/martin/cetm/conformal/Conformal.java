@@ -59,7 +59,8 @@ public class Conformal<V> implements Runnable {
             newton.optimize();
         }
         catch (IterativeSolverNotConvergedException e) {
-            throw new MeshException("Could not find optimal solution", e);
+            throw new MeshException("Could not find optimal solution: " +
+                                    e.getReason(), e);
         }
     }
 

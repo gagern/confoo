@@ -48,6 +48,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    <dependency>
       <groupId>de.jtem</groupId>
       <artifactId>numericalMethods</artifactId>
       <version>1.0</version>
