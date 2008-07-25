@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>de.berlios.ressim</groupId>
+  <artifactId>mtj</artifactId>
+  <version>0.9.9</version>
+  <name>Matrix Toolkits for Java</name>
+  <description>Collection of matrix data structures and algorithms</description>
+  <url>http://ressim.berlios.de/</url>
+  <licenses>
+    <license>
+      <name>LGPL 2.1</name>
+      <url>http://ressim.berlios.de/LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <!--
+      Imported into Maven repository with this pom.xml by Martin von Gagern
+      using the following commands:
+
+      wget http://ressim.berlios.de/mtj.jar
+      mvn install:install-file -DgroupId=de.berlios.ressim -DartifactId=mtj \
+          -Dpackaging=jar -DgeneratePom=true -Dfile=mtj.jar -Dversion=0.9.9 \
+          -DpomFile=<thisFileHere>
+
+      The 0.9.9 mtj.jar artifact has MD5 sum aab983f4ddebc5a0ababa4c9013a8e8a
+  -->
+</project>
