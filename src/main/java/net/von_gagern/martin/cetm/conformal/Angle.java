@@ -33,7 +33,10 @@ class Angle {
         double lp = prevEdge.length();
         double nom = (ln + lo - lp)*(lo + lp - ln);
         double denom = (lp + ln - lo)*(lo + lp + ln);
-        angle = Math.atan2(nom, denom);
+        if (nom <= denom)
+            angle = 2.*Math.atan(Math.sqrt(nom/denom));
+        else
+            angle = Math.PI - 2.*Math.atan(Math.sqrt(denom/nom));
     }
 
     public Vertex vertex() {
