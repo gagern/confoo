@@ -116,8 +116,8 @@ public class Conformal<V> implements Runnable {
      * Access to result
      ********************************************************************/
 
-    public LocatedMesh<Vertex> getMesh() {
-        return mesh;
+    public LocatedMesh<V> getMesh() {
+        return new ResultMesh<V>(mesh);
     }
 
 }

@@ -66,9 +66,10 @@ public class ObjFormat
         this(new InputStreamReader(in, "ISO-8859-1"));
     }
 
-    public <V> ObjFormat(LocatedMesh<V> mesh) {
+    public <V> ObjFormat(LocatedMesh<V> mesh, Map<V, Integer> vertexMap) {
         this();
-        Map<V, Integer> m = new HashMap<V, Integer>();
+        if (vertexMap == null)
+            vertexMap = new HashMap<V, Integer>();
         Iterator<? extends CorneredTriangle<? extends V>> iter;
         iter = mesh.iterator();
         while (iter.hasNext()) {
@@ -76,22 +77,46 @@ public class ObjFormat
             int[] cs = new int[3];
             for (int i = 0; i < 3; ++i) {
                 V c = t.getCorner(i);
-                Integer ci = m.get(c);
+                Integer ci = vertexMap.get(c);
                 if (ci == null) {
-                    ci = m.size() + 1;
-                    m.put(c, ci);
+                    ci = vertexMap.size() + 1;
+                    vertexMap.put(c, ci);
                 }
                 cs[i] = ci;
             }
             fs.add(cs);
         }
-        vs.addAll(Collections.nCopies(m.size(), (double[])null));
-        for (Map.Entry<V, Integer> entry: m.entrySet()) {
+        vs.addAll(Collections.nCopies(vertexMap.size(), (double[])null));
+        for (Map.Entry<V, Integer> entry: vertexMap.entrySet()) {
             V v = entry.getKey();
             double x = mesh.getX(v);
             double y = mesh.getY(v);
             double z = mesh.getZ(v);
             vs.set(entry.getValue() - 1, new double[] {x, y, z});
+        }
+    }
+
+    public ObjFormat(LocatedMesh<Integer> mesh) {
+        this();
+        Iterator<? extends CorneredTriangle<? extends Integer>> iter;
+        iter = mesh.iterator();
+        int maxVertex = 0;
+        while (iter.hasNext()) {
+            CorneredTriangle<? extends Integer> t = iter.next();
+            int[] cs = new int[3];
+            for (int i = 0; i < 3; ++i) {
+                int c = t.getCorner(i);
+                cs[i] = c;
+                if (maxVertex < c)
+                    maxVertex = c;
+            }
+            fs.add(cs);
+        }
+        for (int v = 1; v <= maxVertex; ++v) {
+            double x = mesh.getX(v);
+            double y = mesh.getY(v);
+            double z = mesh.getZ(v);
+            vs.add(new double[] {x, y, z});
         }
     }
 
