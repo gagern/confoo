@@ -19,7 +19,7 @@ class Energy implements Functional {
 
     private final int size;
 
-    public Energy(InternalMesh mesh) {
+    public Energy(InternalMesh<?> mesh) {
         vertices = mesh.getVertices();
         edges = mesh.getEdges();
         angles = mesh.getAngles();

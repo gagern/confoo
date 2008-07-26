@@ -103,19 +103,19 @@ public class Newton implements Callable<Vector> {
         f.setArgument(x);                             // working on f(x) now
         for (int i = 1; i <= maxIterations; ++i) {
             logger.debug("Iteration " + i);
-            g = f.gradient(g);                        // g = ∇f(x)
+            g = f.gradient(g);                        // g = grad f(x)
             double gradNormValue = g.norm(gradNorm);
             logger.debug("Gradient norm: " + gradNormValue);
             if (gradNormValue <= gradEpsilon) {
                 setExitCondition(ExitCondition.GRADIENT, gradNormValue);
                 return argmin = x;
             }
-            h = f.hessian(h);                         // h = ∇²f(x)
-            g = g.scale(-1);                          // g = -∇f(x)
+            h = f.hessian(h);                         // h = Hess f(x)
+            g = g.scale(-1);                          // g = - grad f(x)
             double v = f.value();                     // v = f(x)
             logger.debug("Function value: " + v);
-            delta = solver.solve(h, g, delta.zero()); // h*Δ = g
-            double lamdaSq = g.dot(delta);            // λ² = <g, Δ>
+            delta = solver.solve(h, g, delta.zero()); // h*delta = g
+            double lamdaSq = g.dot(delta);            // lamda² = <g, delta>
             logger.debug("lambda^2: " + lamdaSq);
             if (lamdaSq/2 <= estimateEpsilon) {
                 setExitCondition(ExitCondition.ESTIMATE, lamdaSq/2);
@@ -132,7 +132,7 @@ public class Newton implements Callable<Vector> {
                     return argmin = x;
                 }
                 x2.set(x);
-                x2.add(t, delta);                     // x2 = x + tΔ
+                x2.add(t, delta);                     // x2 = x + t*delta
                 f.setArgument(x2);
                 double v2 = f.value();
                 if (v2 < v + alpha*t*lamdaSq)
