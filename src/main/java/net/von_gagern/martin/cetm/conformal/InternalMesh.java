@@ -92,17 +92,28 @@ class InternalMesh<V> implements LocatedMesh<Vertex> {
 
         }
 
-        for (Angle a: as) {
-            Vertex v = a.vertex();
-            if (v.getKind() == null)
-                v.setKind(Vertex.Kind.CORNER);
-            else
-                v.setKind(Vertex.Kind.BOUNDARY);
-        }
         for (Edge e: es) {
-            if (!e.isBoundary()) {
-                e.getV1().setKind(Vertex.Kind.INTERIOR);
-                e.getV2().setKind(Vertex.Kind.INTERIOR);
+            Vertex v1 = e.getV1(), v2 = e.getV2();
+            Vertex.Kind k1 = v1.getKind(), k2 = v2.getKind();
+            if (e.isBoundary()) {
+                if (k1 == null)
+                    v1.setKind(Vertex.Kind.CORNER);
+                if (k1 == Vertex.Kind.INTERIOR)
+                    v1.setKind(Vertex.Kind.BOUNDARY);
+                if (k2 == null)
+                    v2.setKind(Vertex.Kind.CORNER);
+                if (k2 == Vertex.Kind.INTERIOR)
+                    v2.setKind(Vertex.Kind.BOUNDARY);
+            }
+            else {
+                if (k1 == null)
+                    v1.setKind(Vertex.Kind.INTERIOR);
+                if (k1 == Vertex.Kind.CORNER)
+                    v1.setKind(Vertex.Kind.BOUNDARY);
+                if (k2 == null)
+                    v2.setKind(Vertex.Kind.INTERIOR);
+                if (k2 == Vertex.Kind.CORNER)
+                    v2.setKind(Vertex.Kind.BOUNDARY);
             }
         }
     }
