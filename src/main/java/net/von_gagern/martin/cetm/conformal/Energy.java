@@ -86,7 +86,7 @@ class Energy implements Functional {
         else h.zero();
         for (Angle a: angles) {
             double alpha = a.angle();
-            double cot = Math.sin(alpha)/Math.cos(alpha);
+            double cot = Math.cos(alpha)/Math.sin(alpha);
             double cot2 = cot/2;
             int i = a.nextVertex().getIndex();
             int j = a.prevVertex().getIndex();
