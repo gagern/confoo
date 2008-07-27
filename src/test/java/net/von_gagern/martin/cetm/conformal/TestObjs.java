@@ -92,7 +92,7 @@ public class TestObjs extends AbstractTestCase {
         Conformal<Integer> c;
         c = runWithFixedBoundary("test1.obj", 90., 90., 90., 90.);
         LocatedMesh<Integer> m = c.getMesh();
-        AffineTransform t = transformToUnitBox(m);
+        AffineTransform t = transformToUnitBox(m, 1, 2, 4);
         Point2D.Double p = new Point2D.Double();
         for (int i = 1; i <= 9; ++i) {
             p.setLocation(m.getX(i), m.getY(i));
@@ -150,14 +150,15 @@ public class TestObjs extends AbstractTestCase {
             fail (msg + ": Expected " + min + " <= " + actual + " <= " + max);
     }
 
-    private AffineTransform transformToUnitBox(LocatedMesh<Integer> m) {
-        double x1 = m.getX(1), y1 = m.getY(1);
-        double x2 = m.getX(2), y2 = m.getY(2);
-        double x3 = m.getX(3), y3 = m.getY(3);
+    private <V> AffineTransform transformToUnitBox(LocatedMesh<V> m,
+                                               V... unitPoints) {
+        double x1 = m.getX(unitPoints[0]), y1 = m.getY(unitPoints[0]);
+        double x2 = m.getX(unitPoints[1]), y2 = m.getY(unitPoints[1]);
+        double x3 = m.getX(unitPoints[2]), y3 = m.getY(unitPoints[2]);
         double det = x1*y2 + x2*y3 + x3*y1 - x1*y3 - x2*y1 - x3*y2;
         return new AffineTransform((y3-y1)/det, (y1-y2)/det,
                                    (x1-x3)/det, (x2-x1)/det,
-                                   (x3*y1-x1*y3)/det, (x2*y1-x1*y2)/det);
+                                   (x3*y1-x1*y3)/det, (x1*y2-x2*y1)/det);
     }
 
 }

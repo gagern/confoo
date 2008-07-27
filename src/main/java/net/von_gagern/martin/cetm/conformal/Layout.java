@@ -4,7 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import org.apache.log4j.Logger;
+
 class Layout implements Runnable {
+
+    private final Logger logger = Logger.getLogger(Layout.class);
 
     private final List<Triangle> triangles;
 
@@ -17,6 +21,7 @@ class Layout implements Runnable {
         Queue<Triangle> q = new LinkedList<Triangle>();
         clearIterFlags();
         Triangle start = findStart();
+        logger.debug("Start triangle: " + start);
         layoutStart(start);
         q.add(start);
         clearIterFlags();
@@ -28,7 +33,7 @@ class Layout implements Runnable {
                 if (t2 == null || t2.getIterFlag()) continue;
                 q.add(t2);
                 t2.setIterFlag();
-                layout(e, t2);
+                layoutEdge(e, t2);
             }
         }
     }
@@ -81,6 +86,11 @@ class Layout implements Runnable {
         v1.setLocation(0, 0);
         v2.setLocation(l12, 0);
         v3.setLocation(l13*Math.cos(alpha), l13*Math.sin(alpha));
+        logger.trace("Vertex " + v1.getRep() + " at location (0,0)");
+        logger.trace("Vertex " + v2.getRep() + " at location (" +
+                     v2.getX() + ",0)");
+        logger.trace("Vertex " + v3.getRep() + " at location (" +
+                     v3.getX() + "," + v3.getY() + ")");
 
         // set angles
         if (e12.getV1() == v1) e12.setAngle(0);
@@ -100,7 +110,7 @@ class Layout implements Runnable {
      * @param e the edge by which the triangle was entered
      * @param t the triangle just entered
      */
-    private void layout(Edge e, Triangle t) {
+    private void layoutEdge(Edge e, Triangle t) {
         /* Imagine t is an oriented triangle ABC. We entered the triangle
          * through the unoriented edge [AB], so e is either [AB] or [BA].
          * We want to find the coordinates for C, based on those of A.
@@ -112,30 +122,38 @@ class Layout implements Runnable {
          */
 
         Vertex c = t.getOppositeVertex(e);
-        if (c.hasLocation()) return;
-        Angle bac = t.getNextAngle(c);
-        Vertex a = bac.vertex();
-        Edge ac = bac.prevEdge();
+        Angle bac = t.getNextAngle(c), cba = t.getPrevAngle(c);
+        Vertex a = bac.vertex(), b = cba.vertex();
+        Edge ca = bac.prevEdge(), bc = cba.nextEdge();
+        double alpha = bac.angle(), beta = cba.angle();
+        double abAngle = e.getAngle();
 
-        double alpha = bac.angle();
-        double beta = e.getAngle();
-        double gamma = alpha + beta;
-        if ((e.getV1() == a) != (ac.getV1() == a)) {
-            if (gamma > 0) gamma -= Math.PI;
-            else gamma += Math.PI;
+        double caAngle = edgeAngle(abAngle + alpha, e, ca, a);
+        double bcAngle = edgeAngle(abAngle - beta, e, bc, b);
+        ca.offerAngle(caAngle);
+        bc.offerAngle(bcAngle);
+
+        double caLen = ca.length(), bcLen = bc.length();
+        if (ca.getV1() != a) caLen = -caLen;
+        if (bc.getV1() != b) bcLen = -bcLen;
+        double caX = a.getX() + caLen*Math.cos(caAngle);
+        double caY = a.getY() + caLen*Math.sin(caAngle);
+        double bcX = b.getX() + bcLen*Math.cos(bcAngle);
+        double bcY = b.getY() + bcLen*Math.sin(bcAngle);
+        double x = (caX + bcX)/2, y = (caY + bcY)/2;
+        c.offerLocation(x, y);
+        logger.trace("layoutEdge(" + e + ", " + t + ") set " + c +
+                     " to (" + x + ", " + y + ")");
+    }
+
+    private double edgeAngle(double angle, Edge e1, Edge e2, Vertex v) {
+        if ((e1.getV1() == v) != (e2.getV1() == v)) {
+            if (angle > 0) angle -= Math.PI;
+            else angle += Math.PI;
         }
-        while (gamma > Math.PI) gamma -= 2*Math.PI;
-        while (gamma <= -Math.PI) gamma += 2*Math.PI;
-        ac.setAngle(gamma);
-
-        double x = a.getX();
-        double y = a.getY();
-        double l = ac.length();
-        double sign = 1;
-        if (ac.getV1() != a) sign = -1;
-        x += sign*l*Math.cos(gamma);
-        y += sign*l*Math.sin(gamma);
-        c.setLocation(x, y);
+        while (angle > Math.PI) angle -= 2*Math.PI;
+        while (angle <= -Math.PI) angle += 2*Math.PI;
+        return angle;
     }
 
     public void run() {

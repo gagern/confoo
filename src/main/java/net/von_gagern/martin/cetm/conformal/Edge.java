@@ -20,7 +20,7 @@ class Edge {
 
     private double length;
 
-    private double angle;
+    private double angle = Double.NaN;
 
     public Edge(Vertex v1, Vertex v2, Triangle t1, double length) {
         this.v1 = v1;
@@ -86,6 +86,11 @@ class Edge {
 
     public void setAngle(double angle) {
         this.angle = angle;
+    }
+
+    public void offerAngle(double angle) {
+        if (Double.isNaN(this.angle))
+            this.angle = angle;
     }
 
     @Override public String toString() {

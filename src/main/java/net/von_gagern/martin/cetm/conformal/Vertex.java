@@ -98,6 +98,11 @@ class Vertex {
         location = new Point2D.Double(x, y);
     }
 
+    public void offerLocation(double x, double y) {
+        if (location == null)
+            location = new Point2D.Double(x, y);
+    }
+
     @Override public String toString() {
         return rep.toString();
     }

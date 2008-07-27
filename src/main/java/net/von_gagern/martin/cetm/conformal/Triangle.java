@@ -79,6 +79,13 @@ class Triangle implements CorneredTriangle<Vertex> {
         throw new IllegalArgumentException("given vertex not part of triangle");
     }
 
+    public Angle getPrevAngle(Vertex v) {
+        for (Angle a: as)
+            if (a.nextVertex() == v)
+                return a;
+        throw new IllegalArgumentException("given vertex not part of triangle");
+    }
+
     private class EdgeList extends AbstractList<Edge> {
 
         public Edge get(int index) {
@@ -101,6 +108,14 @@ class Triangle implements CorneredTriangle<Vertex> {
             return as.size();
         }
 
+    }
+
+    @Override public String toString() {
+        StringBuilder buf = new StringBuilder("Triangle(");
+        buf.append(as.get(0).vertex().getRep().toString()).append(", ");
+        buf.append(as.get(1).vertex().getRep().toString()).append(", ");
+        buf.append(as.get(2).vertex().getRep().toString()).append(")");
+        return buf.toString();
     }
 
 }
