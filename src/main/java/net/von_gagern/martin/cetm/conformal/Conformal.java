@@ -6,6 +6,7 @@ import net.von_gagern.martin.cetm.mesh.LocatedMesh;
 import net.von_gagern.martin.cetm.mesh.MeshException;
 import net.von_gagern.martin.cetm.mesh.MetricMesh;
 import net.von_gagern.martin.cetm.opt.Newton;
+import no.uib.cipr.matrix.Vector;
 import no.uib.cipr.matrix.sparse.IterativeSolverNotConvergedException;
 
 public class Conformal<V> implements Runnable {
@@ -41,7 +42,7 @@ public class Conformal<V> implements Runnable {
 
     public void transform() throws MeshException {
         boundary();
-        adjust();
+        lengths();
         scale();
         layout();
     }
@@ -52,9 +53,10 @@ public class Conformal<V> implements Runnable {
         boundaryCondition.setTargets(mesh);
     }
 
-    private void adjust() throws MeshException {
+    private void lengths() throws MeshException {
         Energy energy = new Energy(mesh);
         Newton newton = Newton.getInstance(energy);
+        configureNewton(newton);
         try {
             newton.optimize();
         }
@@ -82,6 +84,14 @@ public class Conformal<V> implements Runnable {
     private void layout() throws MeshException {
         Layout layout = new Layout(mesh);
         layout.layout();
+    }
+
+    protected void configureNewton(Newton newton) {
+        newton.setNorm(Newton.ExitCondition.GRADIENT, Vector.Norm.Infinity);
+        newton.setEpsilon(Newton.ExitCondition.GRADIENT, 1e-15);
+        newton.setEpsilon(Newton.ExitCondition.ESTIMATE, 0);
+        newton.setEpsilon(Newton.ExitCondition.DELTA, 0);
+        newton.setMaxIterations(128);
     }
 
     /*********************************************************************
