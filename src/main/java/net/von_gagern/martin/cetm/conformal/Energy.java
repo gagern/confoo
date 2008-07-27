@@ -9,8 +9,11 @@ import no.uib.cipr.matrix.Vector;
 import net.von_gagern.martin.cetm.fun.Clausen;
 import net.von_gagern.martin.cetm.opt.Functional;
 import net.von_gagern.martin.cetm.opt.Newton;
+import org.apache.log4j.Logger;
 
 class Energy implements Functional {
+
+    private final Logger logger = Logger.getLogger(Energy.class);
 
     private final Collection<Vertex> vertices;
 
@@ -29,6 +32,15 @@ class Energy implements Functional {
         for (Vertex v: vertices) {
             if (v.isFixed()) v.setIndex(-1);
             else v.setIndex(index++);
+        }
+        if (logger.isDebugEnabled()) {
+            for (java.util.Map.Entry<?, Vertex> entry:
+                 mesh.getVertexMap().entrySet()) {
+                Vertex v = entry.getValue();
+                logger.debug(entry.getKey() + " -> " + v.getIndex() +
+                             " ( " + v.getKind() + ", " +
+                             v.getTarget()*(180./Math.PI) + ")");
+            }
         }
         size = index;
     }
