@@ -120,4 +120,12 @@ public class Conformal<V> implements Runnable {
         return new ResultMesh<V>(mesh);
     }
 
+    /*********************************************************************
+     * Debug-related stuff
+     ********************************************************************/
+
+    /* package-private */ InternalMesh<V> getInternalMesh() {
+        return mesh;
+    }
+
 }

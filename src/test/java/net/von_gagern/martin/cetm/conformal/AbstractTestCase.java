@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
 import org.apache.log4j.Logger;
+import static org.junit.Assert.*;
 
 import net.von_gagern.martin.cetm.mesh.MeshException;
 import net.von_gagern.martin.cetm.mesh.ObjFormat;
@@ -16,6 +17,10 @@ abstract class AbstractTestCase {
     public static final double DEG = Math.PI/180.;
 
     protected int maxOutLen = 32*1024;
+
+    protected double angleTolerance = 1/3600.;
+
+    protected double lengthTolerance = 1e-12;
 
     protected Conformal<Integer>
         conformalWithFixedBoundary(String objName, double... angles)
@@ -63,4 +68,13 @@ abstract class AbstractTestCase {
             logger.debug(str);
     }
 
+    protected void checkEdgeLengths(InternalMesh<?> mesh) {
+        for (Edge e: mesh.getEdges()) {
+            double dx = mesh.getX(e.getV1()) - mesh.getX(e.getV2());
+            double dy = mesh.getY(e.getV1()) - mesh.getY(e.getV2());
+            double dz = mesh.getZ(e.getV1()) - mesh.getZ(e.getV2());
+            double len = Math.sqrt(dx*dx + dy*dy + dz*dz);
+            assertEquals(e.length(), len, lengthTolerance);
+        }
+    }
 }

@@ -2,16 +2,9 @@ package net.von_gagern.martin.cetm.conformal;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import no.uib.cipr.matrix.DenseVector;
-import no.uib.cipr.matrix.LowerSPDPackMatrix;
-import no.uib.cipr.matrix.Matrix;
-import no.uib.cipr.matrix.Vector;
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import net.von_gagern.martin.cetm.mesh.LocatedMesh;
 import net.von_gagern.martin.cetm.mesh.MeshException;
 import net.von_gagern.martin.cetm.mesh.ObjFormat;
 

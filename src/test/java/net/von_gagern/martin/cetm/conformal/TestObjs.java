@@ -1,5 +1,7 @@
 package net.von_gagern.martin.cetm.conformal;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.junit.Test;
@@ -10,7 +12,7 @@ import net.von_gagern.martin.cetm.mesh.MeshException;
 
 public class TestObjs extends AbstractTestCase {
 
-    private Logger logger = Logger.getLogger(TestObjs.class);
+    private final Logger logger = Logger.getLogger(TestObjs.class);
 
     private Conformal<Integer>
         runWithFixedBoundary(String objName, double... angles)
@@ -49,14 +51,14 @@ public class TestObjs extends AbstractTestCase {
         logger.debug("Angle v" + v1 + "-v" + v2 + "-v" + v3 +
                      " is " + actual/DEG + " degrees");
         double error = normalizeAngle(actual - expected*DEG);
-        if (error > tolerance)
+        if (error > tolerance*DEG)
             assertEquals("Angle v" + v1 + "-v" + v2 + "-v" + v3,
-                         expected, actual/DEG, tolerance/DEG);
+                         expected, actual/DEG, tolerance);
     }
 
     private void assertAngle(LocatedMesh<Integer> mesh,
                              int v1, int v2, int v3, double expected) {
-        assertAngle(mesh, v1, v2, v3, expected, 0.5*DEG);
+        assertAngle(mesh, v1, v2, v3, expected, angleTolerance);
     }
 
     @Test public void testOneRightIsosceles()
@@ -75,8 +77,87 @@ public class TestObjs extends AbstractTestCase {
         assertTrue("Positive Y", m.getY(3) > 0.);
     }
 
-    @Test public void testHyp() throws MeshException, IOException {
+    @Test public void test1Lengths() throws MeshException, IOException {
+        Conformal<Integer> c;
+        c = runWithFixedBoundary("test1.obj", 90., 90., 90., 90.);
+        LocatedMesh<Integer> m = c.getMesh();
+        assertAngle(m, 2, 1, 4, 90.);
+        assertAngle(m, 3, 2, 1, 90.);
+        assertAngle(m, 4, 3, 2, 90.);
+        assertAngle(m, 1, 4, 3, 90.);
+        checkEdgeLengths(c.getInternalMesh());
+    }
+
+    @Test public void test1Coordinates() throws MeshException, IOException {
+        Conformal<Integer> c;
+        c = runWithFixedBoundary("test1.obj", 90., 90., 90., 90.);
+        LocatedMesh<Integer> m = c.getMesh();
+        AffineTransform t = transformToUnitBox(m);
+        Point2D.Double p = new Point2D.Double();
+        for (int i = 1; i <= 9; ++i) {
+            p.setLocation(m.getX(i), m.getY(i));
+            t.transform(p, p);
+            double x = p.getX();
+            double y = p.getY();
+            switch (i) {
+            case 1:
+                assertEquals("x1", 0., x, lengthTolerance);
+                assertEquals("y1", 0., y, lengthTolerance);
+                break;
+            case 2:
+                assertEquals("x2", 1., x, lengthTolerance);
+                assertEquals("y2", 0., y, lengthTolerance);
+                break;
+            case 3:
+                assertEquals("x3", 1., x, lengthTolerance);
+                assertEquals("y3", 1., y, lengthTolerance);
+                break;
+            case 4:
+                assertEquals("x4", 0., x, lengthTolerance);
+                assertEquals("y4", 1., y, lengthTolerance);
+                break;
+            case 5:
+                assertRange("x5", 0., 1., x);
+                assertEquals("y5", 0., y, lengthTolerance);
+                break;
+            case 6:
+                assertEquals("x6", 1., x, lengthTolerance);
+                assertRange("y6", 0., 1., y);
+                break;
+            case 7:
+                assertRange("x7", 0., 1., x);
+                assertEquals("y7", 1., y, lengthTolerance);
+                break;
+            case 8:
+                assertEquals("x8", 0., x, lengthTolerance);
+                assertRange("y8", 0., 1., y);
+                break;
+            case 9:
+                assertRange("x9", 0., 1., x);
+                assertRange("y9", 0., 1., y);
+                break;
+            }
+        }
+    }
+
+    public void testHyp() throws MeshException, IOException {
         runWithFixedBoundary("hyp.obj", 60., 60., 60.);
+    }
+
+    private void assertRange(String msg, double min, double max,
+                             double actual) {
+        if (Double.isNaN(actual) || actual < min || actual > max)
+            fail (msg + ": Expected " + min + " <= " + actual + " <= " + max);
+    }
+
+    private AffineTransform transformToUnitBox(LocatedMesh<Integer> m) {
+        double x1 = m.getX(1), y1 = m.getY(1);
+        double x2 = m.getX(2), y2 = m.getY(2);
+        double x3 = m.getX(3), y3 = m.getY(3);
+        double det = x1*y2 + x2*y3 + x3*y1 - x1*y3 - x2*y1 - x3*y2;
+        return new AffineTransform((y3-y1)/det, (y1-y2)/det,
+                                   (x1-x3)/det, (x2-x1)/det,
+                                   (x3*y1-x1*y3)/det, (x2*y1-x1*y2)/det);
     }
 
 }

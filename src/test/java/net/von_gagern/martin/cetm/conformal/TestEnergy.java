@@ -4,22 +4,17 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import no.uib.cipr.matrix.DenseVector;
-import no.uib.cipr.matrix.LowerSPDPackMatrix;
-import no.uib.cipr.matrix.Matrix;
 import no.uib.cipr.matrix.Vector;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import net.von_gagern.martin.cetm.mesh.LocatedMesh;
 import net.von_gagern.martin.cetm.mesh.MeshException;
 import net.von_gagern.martin.cetm.mesh.ObjFormat;
 
 public class TestEnergy extends AbstractTestCase {
 
-    private Logger logger = Logger.getLogger(TestEnergy.class);
-
-    private double ATOL = 1/3600.; // one arc second
+    private final Logger logger = Logger.getLogger(TestEnergy.class);
 
     @Test public void zeroInitializedVector() {
         Vector u = new DenseVector(2);
@@ -34,7 +29,7 @@ public class TestEnergy extends AbstractTestCase {
         ObjFormat obj = objResource("oneRightIsosceles.obj");
         InternalMesh<Integer> mesh = new InternalMesh<Integer>(obj);
         for (Vertex v: mesh.getVertices()) v.setTarget(60*DEG);
-        mesh.getVertices().get(1).setFixed(true);
+        mesh.getVertexMap().get(2).setFixed(true);
         return mesh;
     }
 
@@ -58,13 +53,14 @@ public class TestEnergy extends AbstractTestCase {
             Vertex v = a.vertex();
             int id = getId(v, mesh) - 1;
             seenAngle |= (1 << id);
-            if (Math.abs(angles[id] - a.angle()/DEG) > ATOL) {
+            if (Math.abs(angles[id] - a.angle()/DEG) > angleTolerance) {
                 logger.debug("Wrong angle " + id);
                 logger.debug("nextEdge: " + a.nextEdge().length());
                 logger.debug("prevEdge: " + a.prevEdge().length());
                 logger.debug("oppositeEdge: " + a.oppositeEdge().length());
             }
-            assertEquals("Angle " + id, angles[id], a.angle()/DEG, ATOL);
+            assertEquals("Angle " + id, angles[id], a.angle()/DEG,
+                         angleTolerance);
         }
         assertEquals(7, seenAngle);
     }
@@ -73,12 +69,15 @@ public class TestEnergy extends AbstractTestCase {
         throws IOException, MeshException
     {
         InternalMesh<Integer> mesh = oneRightIsoscelesToEquilateral();
+        Map<Integer, Vertex> vm = mesh.getVertexMap();
         Energy e = new Energy(mesh);
         e.setArgument(new DenseVector(2));
         Vector g = e.gradient(null);
         assertEquals(2, g.size());
-        assertEquals(60. - 90., g.get(0)/DEG, ATOL);
-        assertEquals(60. - 45., g.get(1)/DEG, ATOL);
+        assertEquals(60. - 90., g.get(vm.get(1).getIndex())/DEG,
+                     angleTolerance);
+        assertEquals(60. - 45., g.get(vm.get(3).getIndex())/DEG,
+                     angleTolerance);
     }
 
 
