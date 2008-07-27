@@ -98,4 +98,8 @@ class Vertex {
         location = new Point2D.Double(x, y);
     }
 
+    @Override public String toString() {
+        return rep.toString();
+    }
+
 }

@@ -84,7 +84,7 @@ public class Conformal<V> implements Runnable {
             a.update();
         if (logger.isTraceEnabled())
             for (Edge e: mesh.getEdges())
-                logger.trace("Edge length: " + e.length());
+                logger.trace("Edge length " + e + ": " + e.length());
     }
 
     private void layout() throws MeshException {

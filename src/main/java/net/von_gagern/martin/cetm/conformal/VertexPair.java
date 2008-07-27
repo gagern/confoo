@@ -11,11 +11,11 @@ class VertexPair {
         this.v2 = v2;
     }
 
-    public int hashCode() {
+    @Override public int hashCode() {
         return v1.hashCode() ^ v2.hashCode();
     }
 
-    public boolean equals(Object o) {
+    @Override public boolean equals(Object o) {
         if (!(o instanceof VertexPair)) return false;
         VertexPair that = (VertexPair)o;
         return (this.v1.equals(that.v1) && this.v2.equals(that.v2)) ||

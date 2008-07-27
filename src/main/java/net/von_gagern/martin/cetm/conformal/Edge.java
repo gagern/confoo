@@ -88,4 +88,8 @@ class Edge {
         this.angle = angle;
     }
 
+    @Override public String toString() {
+        return v1.getRep().toString() + "--" + v2.getRep().toString();
+    }
+
 }
