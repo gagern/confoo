@@ -29,6 +29,7 @@ class Edge {
         this.t2 = null;
         this.origLength = this.length = length;
         this.origLogLength = this.logLength = 2*Math.log(length);
+        assert length > 0: "length must be positive";
     }
 
     public void addTriangle(Vertex v1, Vertex v2, Triangle t2)
@@ -48,7 +49,10 @@ class Edge {
 
     public void update() {
         logLength = origLogLength + v1.getU() + v2.getU();
+        assert !Double.isInfinite(logLength): "logLength is infinite";
+        assert !Double.isNaN(logLength): "logLength is NaN";
         length = Math.exp(logLength/2);
+        assert length > 0: "length must stay positive (" + logLength + ")";
     }
 
     public double logLength() {

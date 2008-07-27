@@ -37,6 +37,8 @@ class Angle {
             angle = 2.*Math.atan(Math.sqrt(nom/denom));
         else
             angle = Math.PI - 2.*Math.atan(Math.sqrt(denom/nom));
+        assert !Double.isInfinite(angle): "angle is infinite";
+        assert !Double.isNaN(angle): "angle is NaN";
     }
 
     public Vertex vertex() {
