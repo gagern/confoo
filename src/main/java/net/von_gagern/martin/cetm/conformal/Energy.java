@@ -1,5 +1,6 @@
 package net.von_gagern.martin.cetm.conformal;
 
+import java.util.Arrays;
 import java.util.Collection;
 import no.uib.cipr.matrix.DenseVector;
 import no.uib.cipr.matrix.LowerSPDPackMatrix;
@@ -51,18 +52,32 @@ class Energy implements Functional {
     }
 
     public double value() {
-        double res = 0;
+        double[] terms = new double[angles.size() + vertices.size()];
+        int nterms = 0;
         for (Angle a: angles) {
             double alpha = a.angle();
             double lamda = a.oppositeEdge().logLength();
             double cl2 = Clausen.cl2(2*alpha);
             double u = a.vertex().getU();
-            res += alpha*lamda + cl2 + Math.PI*u;
+            double term = alpha*lamda + cl2 - Math.PI*u;
+            assert !Double.isInfinite(term): "infinite term in value";
+            assert !Double.isNaN(term): "NaN term in value";
+            terms[nterms++] = term;
         }
         for (Vertex v: vertices) {
-            res += v.getTarget()*v.getU();
+            double term = v.getTarget()*v.getU();
+            assert !Double.isInfinite(term): "infinite term in value";
+            assert !Double.isNaN(term): "NaN term in value";
+            terms[nterms++] = term;
         }
-        return res;
+        assert nterms == terms.length: "Wrong number of terms";
+        Arrays.sort(terms, 0, nterms);
+        double sum = 0;
+        for (int left = 0, right = nterms; left < right; ) {
+            if (sum >= 0) sum += terms[left++];
+            else sum += terms[--right];
+        }
+        return sum;
     }
 
     public Vector gradient(Vector g) {
