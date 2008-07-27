@@ -8,8 +8,11 @@ import net.von_gagern.martin.cetm.mesh.MetricMesh;
 import net.von_gagern.martin.cetm.opt.Newton;
 import no.uib.cipr.matrix.Vector;
 import no.uib.cipr.matrix.sparse.IterativeSolverNotConvergedException;
+import org.apache.log4j.Logger;
 
 public class Conformal<V> implements Runnable {
+
+    private final Logger logger = Logger.getLogger(Conformal.class);
 
     private InternalMesh<V> mesh;
 
@@ -79,6 +82,9 @@ public class Conformal<V> implements Runnable {
             e.update();
         for (Angle a: mesh.getAngles())
             a.update();
+        if (logger.isTraceEnabled())
+            for (Edge e: mesh.getEdges())
+                logger.trace("Edge length: " + e.length());
     }
 
     private void layout() throws MeshException {
