@@ -4,6 +4,17 @@ import java.awt.geom.Point2D;
 
 class Vertex {
 
+    private Object rep;
+
+    public Vertex(Object rep) {
+        this.rep = rep;
+    }
+
+    public Object getRep() {
+        return rep;
+    }
+
+
     private int index = -1;
 
     public int getIndex() {

@@ -15,14 +15,9 @@ class ResultMesh<V> implements LocatedMesh<V> {
 
     private final Map<V, Vertex> vm;
 
-    private final Map<Vertex, V> ivm;
-
     public ResultMesh(InternalMesh<V> internal) {
         this.internal = internal;
         vm = internal.getVertexMap();
-        ivm = new HashMap<Vertex, V>();
-        for (Map.Entry<V, Vertex> entry: vm.entrySet())
-            ivm.put(entry.getValue(), entry.getKey());
     }
 
     public double getX(V v) {
@@ -45,6 +40,10 @@ class ResultMesh<V> implements LocatedMesh<V> {
         return new Iter();
     }
 
+    private V getRep(Vertex v) {
+        return (V)v.getRep();
+    }
+
     private class Iter extends AbstractMeshIterator<V> {
 
         Iterator<? extends CorneredTriangle<? extends Vertex>> i =
@@ -56,9 +55,9 @@ class ResultMesh<V> implements LocatedMesh<V> {
 
         public SimpleTriangle<V> next() {
             CorneredTriangle<? extends Vertex> t = i.next();
-            return new SimpleTriangle<V>(ivm.get(t.getCorner(0)),
-                                         ivm.get(t.getCorner(1)),
-                                         ivm.get(t.getCorner(2)));
+            return new SimpleTriangle<V>(getRep(t.getCorner(0)),
+                                         getRep(t.getCorner(1)),
+                                         getRep(t.getCorner(2)));
         }
 
     }

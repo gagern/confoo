@@ -51,7 +51,7 @@ class InternalMesh<V> implements LocatedMesh<Vertex> {
                 V c = triangle.getCorner(i);
                 Vertex v = vm.get(c);
                 if (v == null) {
-                    v = new Vertex();
+                    v = new Vertex(c);
                     vs.add(v);
                     vm.put(c, v);
                 }

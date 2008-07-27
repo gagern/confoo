@@ -34,11 +34,7 @@ public class TestEnergy extends AbstractTestCase {
     }
 
     private int getId(Vertex v, InternalMesh<Integer> mesh) {
-        Map<Integer, Vertex> map = mesh.getVertexMap();
-        for (int i = 1; i <= map.size(); ++i)
-            if (map.get(i) == v)
-                return i;
-        throw new NoSuchElementException();
+        return (Integer)v.getRep();
     }
 
     @Test public void testOneRightIsoscelesAngles()
