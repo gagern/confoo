@@ -1,6 +1,9 @@
 package net.von_gagern.martin.cetm.mesh;
 
-public class SimpleTriangle<C> implements CorneredTriangle<C> {
+import java.util.AbstractList;
+
+public class SimpleTriangle<C>
+    extends AbstractList<C> implements CorneredTriangle<C> {
 
     private C c1, c2, c3;
 
@@ -17,6 +20,36 @@ public class SimpleTriangle<C> implements CorneredTriangle<C> {
         case 2: return c3;
         default: throw new IndexOutOfBoundsException();
         }
+    }
+
+    public C get(int index) {
+        return getCorner(index);
+    }
+
+    public int size() {
+        return 3;
+    }
+
+    @Override public int hashCode() {
+        return c1.hashCode() ^ c2.hashCode() ^ c3.hashCode();
+    }
+
+    @Override public boolean equals(Object o) {
+        return o instanceof SimpleTriangle && equal(this, (SimpleTriangle)o);
+    }
+
+    public static boolean
+    equal(CorneredTriangle<?> t1, CorneredTriangle<?> t2) {
+        ROTATIONS: for (int rotation = 0; rotation < 3; ++rotation) {
+            for (int corner = 0; corner < 3; ++corner) {
+                if (!t1.getCorner((corner + rotation)%3)
+                    .equals(t2.getCorner(corner))) {
+                    continue ROTATIONS;
+                }
+            }
+            return true; // rotation matches completely
+        }
+        return false; // no rotation matches
     }
 
 }
