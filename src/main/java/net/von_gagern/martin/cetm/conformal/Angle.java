@@ -31,6 +31,18 @@ class Angle {
         double lo = oppositeEdge.length();
         double ln = nextEdge.length();
         double lp = prevEdge.length();
+
+        // handle violations of triangle inequality
+        if (lo >= ln + lp) {
+            angle = Math.PI;
+            return;
+        }
+        if (ln >= lo + lp || lp >= lo + ln) {
+            angle = 0;
+            return;
+        }
+
+        // calculate angle using half-angle formula
         double nom = (ln + lo - lp)*(lo + lp - ln);
         double denom = (lp + ln - lo)*(lo + lp + ln);
         if (nom <= denom)

@@ -43,10 +43,11 @@ public class Conformal<V> implements Runnable {
      * Calculate conformal mapping
      ********************************************************************/
 
-    public void transform() throws MeshException {
+    public void transform() throws MeshException, TriangleInequalityException {
         boundary();
         lengths();
         scale();
+        triangleInequalities();
         layout();
     }
 
@@ -85,6 +86,20 @@ public class Conformal<V> implements Runnable {
         if (logger.isTraceEnabled())
             for (Edge e: mesh.getEdges())
                 logger.trace("Edge length " + e + ": " + e.length());
+    }
+
+    private void triangleInequalities() throws TriangleInequalityException {
+        for (Triangle t: mesh.getTriangles()) {
+            for (Angle a: t.getAngles()) {
+                if (a.oppositeEdge().length() >
+                    a.prevEdge().length() + a.nextEdge().length()) {
+                    Object o1 = a.vertex().getRep();
+                    Object o2 = a.nextVertex().getRep();
+                    Object o3 = a.prevVertex().getRep();
+                    throw new TriangleInequalityException(o1, o2, o3);
+                }
+            }
+        }
     }
 
     private void layout() throws MeshException {
