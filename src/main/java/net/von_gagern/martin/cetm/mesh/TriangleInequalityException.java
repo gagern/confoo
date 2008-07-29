@@ -1,9 +1,7 @@
-package net.von_gagern.martin.cetm.conformal;
+package net.von_gagern.martin.cetm.mesh;
 
 import java.util.Arrays;
 import java.util.List;
-import net.von_gagern.martin.cetm.mesh.CorneredTriangle;
-import net.von_gagern.martin.cetm.mesh.MeshException;
 
 public class TriangleInequalityException
     extends MeshException implements CorneredTriangle<Object>

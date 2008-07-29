@@ -48,7 +48,7 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
         return es;
     }
 
-    public Shape getBoundary() {
+    public Set<Edge2D> getBoundaryEdges() {
         Set<Edge2D> edges = new HashSet<Edge2D>(ts.size()*3);
         Set<Edge2D> interior = new HashSet<Edge2D>(ts.size()*3/2);
         for (Triangle2D t: ts) {
@@ -58,8 +58,11 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
             }
         }
         edges.removeAll(interior);
-        interior = null;
+        return edges;
+    }
 
+    public Shape getBoundary() {
+        Set<Edge2D> edges = getBoundaryEdges();
         Map<Vertex2D, PathSegment> segmentEndpoints =
             new HashMap<Vertex2D, PathSegment>(2*edges.size());
         List<PathSegment> completedSegments = new ArrayList<PathSegment>(1);

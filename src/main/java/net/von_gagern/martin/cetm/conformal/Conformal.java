@@ -5,6 +5,7 @@ import java.util.Map;
 import net.von_gagern.martin.cetm.mesh.LocatedMesh;
 import net.von_gagern.martin.cetm.mesh.MeshException;
 import net.von_gagern.martin.cetm.mesh.MetricMesh;
+import net.von_gagern.martin.cetm.mesh.TriangleInequalityException;
 import net.von_gagern.martin.cetm.opt.Newton;
 import no.uib.cipr.matrix.Vector;
 import no.uib.cipr.matrix.sparse.IterativeSolverNotConvergedException;

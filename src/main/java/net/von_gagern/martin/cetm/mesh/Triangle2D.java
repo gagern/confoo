@@ -20,7 +20,7 @@ public class Triangle2D extends SimpleTriangle<Vertex2D> implements Shape {
 
     public Triangle2D(double x1, double y1, double x2, double y2,
                       double x3, double y3) {
-        super(new Vertex2D(x1, y2), new Vertex2D(x2, y2), new Vertex3D(x3, y3));
+        super(new Vertex2D(x1, y2), new Vertex2D(x2, y2), new Vertex2D(x3, y3));
     }
 
     public Rectangle getBounds() {
