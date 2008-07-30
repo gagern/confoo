@@ -170,7 +170,7 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
         public boolean join(PathSegment s, Vertex2D p) {
             halfJoin(s, p);
             s.halfJoin(this, p);
-            return union(s2);
+            return union(s);
         }
 
         private void halfJoin(PathSegment s, Vertex2D p) {
