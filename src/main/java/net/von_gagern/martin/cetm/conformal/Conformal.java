@@ -53,12 +53,14 @@ public class Conformal<V> implements Runnable {
     }
 
     private void boundary() throws MeshException {
+        logger.debug("Assigning boundary conditions");
         if (boundaryCondition == null)
             throw new IllegalStateException("No boundary condition set");
         boundaryCondition.setTargets(mesh);
     }
 
     private void lengths() throws MeshException {
+        logger.debug("Optimizing edge lengths");
         Energy energy = new Energy(mesh);
         Newton newton = Newton.getInstance(energy);
         configureNewton(newton);
@@ -73,6 +75,7 @@ public class Conformal<V> implements Runnable {
 
     private void scale() {
         if (boundaryCondition.fixedScale()) return;
+        logger.debug("Scaling result");
         List<Vertex> vs = mesh.getVertices();
         double sum = 0;
         for (Vertex v: vs)
@@ -90,6 +93,7 @@ public class Conformal<V> implements Runnable {
     }
 
     private void triangleInequalities() throws TriangleInequalityException {
+        logger.debug("Checking triangle inequalities");
         for (Triangle t: mesh.getTriangles()) {
             for (Angle a: t.getAngles()) {
                 if (a.oppositeEdge().length() >
@@ -104,6 +108,7 @@ public class Conformal<V> implements Runnable {
     }
 
     private void layout() throws MeshException {
+        logger.debug("Creating layout");
         Layout layout = new Layout(mesh);
         layout.layout();
     }
