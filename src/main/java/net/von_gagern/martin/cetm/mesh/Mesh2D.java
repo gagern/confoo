@@ -2,7 +2,9 @@ package net.von_gagern.martin.cetm.mesh;
 
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,6 +15,48 @@ import java.util.Set;
 public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
 
     private List<Triangle2D> ts;
+
+    public <V> Mesh2D(LocatedMesh<V> mesh) {
+        ts = new ArrayList<Triangle2D>();
+        Map<V, Vertex2D> vm = new HashMap<V, Vertex2D>();
+        Vertex2D[] tv = new Vertex2D[3];
+        Iterator<? extends CorneredTriangle<? extends V>> i = mesh.iterator();
+        while (i.hasNext()) {
+            CorneredTriangle<? extends V> t = i.next();
+            for (int j = 0; j < 3; ++j) {
+                V c = t.getCorner(j);
+                Vertex2D v = vm.get(c);
+                if (v == null) {
+                    v = new Vertex2D(mesh.getX(c), mesh.getY(c));
+                    vm.put(c, v);
+                }
+                tv[j] = v;
+            }
+            ts.add(new Triangle2D(tv[0], tv[1], tv[2]));
+        }
+    }
+
+    public Mesh2D(Collection<? extends CorneredTriangle<? extends Point2D>>
+                  mesh) {
+        ts = new ArrayList<Triangle2D>();
+        // We still use a map to keep the number of vertex objects low
+        Map<Vertex2D, Vertex2D> vm = new HashMap<Vertex2D, Vertex2D>();
+        Vertex2D[] tv = new Vertex2D[3];
+        Iterator<? extends CorneredTriangle<? extends Point2D>> i;
+        i = mesh.iterator();
+        while (i.hasNext()) {
+            CorneredTriangle<? extends Point2D> t = i.next();
+            for (int j = 0; j < 3; ++j) {
+                Vertex2D c = new Vertex2D(t.getCorner(j));
+                Vertex2D v = vm.get(c);
+                if (v == null) {
+                    vm.put(c, c);
+                }
+                tv[j] = c;
+            }
+            ts.add(new Triangle2D(tv[0], tv[1], tv[2]));
+        }
+    }
 
     public Iterator<Triangle2D> iterator() {
         return ts.iterator();
@@ -46,6 +90,18 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
             }
         }
         return es;
+    }
+
+    public Set<Edge2D> getInteriorEdges() {
+        Set<Edge2D> edges = new HashSet<Edge2D>(ts.size()*3);
+        Set<Edge2D> interior = new HashSet<Edge2D>(ts.size()*3/2);
+        for (Triangle2D t: ts) {
+            for (int i = 0; i < 3; ++i) {
+                Edge2D e = new Edge2D(t.getCorner(i), t.getCorner((i + 1)%3));
+                if (!edges.add(e)) interior.add(e);
+            }
+        }
+        return interior;
     }
 
     public Set<Edge2D> getBoundaryEdges() {
