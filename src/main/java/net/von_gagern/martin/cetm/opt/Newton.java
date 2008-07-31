@@ -134,8 +134,8 @@ public class Newton implements Callable<Vector> {
                 x2.set(x);
                 x2.add(t, delta);                     // x2 = x + t*delta
                 f.setArgument(x2);
-                double v2 = f.value();
-                if (v2 <= v + alpha*t*lamdaSq)
+                double change = f.valueChange();
+                if (change <= alpha*t*lamdaSq || t < 0.1)
                     break;
             }
             Vector x1 = x2;                           // swap x and x2
