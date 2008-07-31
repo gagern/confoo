@@ -23,6 +23,8 @@ class Energy implements Functional {
 
     private final int size;
 
+    private double[] lastValueTerms;
+
     public Energy(InternalMesh<?> mesh) {
         vertices = mesh.getVertices();
         edges = mesh.getEdges();
@@ -63,33 +65,31 @@ class Energy implements Functional {
         }
     }
 
+    double oldValue;
+
     public double value() {
-        double[] terms = new double[angles.size() + vertices.size()];
-        int nterms = 0;
-        for (Angle a: angles) {
-            double alpha = a.angle();
-            double lamda = a.oppositeEdge().logLength();
-            double cl2 = Clausen.cl2(2*alpha);
-            double u = a.vertex().getU();
-            double term = alpha*lamda + cl2 - Math.PI*u;
-            assert !Double.isInfinite(term): "infinite term in value";
-            assert !Double.isNaN(term): "NaN term in value";
-            terms[nterms++] = term;
-        }
-        for (Vertex v: vertices) {
-            double term = v.getTarget()*v.getU();
-            assert !Double.isInfinite(term): "infinite term in value";
-            assert !Double.isNaN(term): "NaN term in value";
-            terms[nterms++] = term;
-        }
-        assert nterms == terms.length: "Wrong number of terms";
-        Arrays.sort(terms, 0, nterms);
-        double sum = 0;
-        for (int left = 0, right = nterms; left < right; ) {
-            if (sum >= 0) sum += terms[left++];
-            else sum += terms[--right];
-        }
-        return sum;
+        double[] terms = valueTerms();
+        lastValueTerms = (double[])terms.clone();
+        oldValue = preciseSum(terms);
+        return oldValue;
+    }
+
+    public double valueChange() {
+        double[] terms = valueTerms();
+        double simpleChange = preciseSum((double[])terms.clone()) - oldValue;
+        for (int i = 0; i < terms.length; ++i)
+            terms[i] -= lastValueTerms[i];
+        double preciseChange = preciseSum(terms);
+        logger.debug("valueChange simple: " + simpleChange + ", " +
+                     "precise: " + preciseChange);
+        return preciseChange;
+    }
+
+    public double preciseValueChange() {
+        double[] terms = valueTerms();
+        for (int i = 0; i < terms.length; ++i)
+            terms[i] -= lastValueTerms[i];
+        return preciseSum(terms);
     }
 
     public Vector gradient(Vector g) {
@@ -128,6 +128,49 @@ class Energy implements Functional {
             }
         }
         return h;
+    }
+
+    private double[] valueTerms() {
+        double[] terms = new double[angles.size() + vertices.size()];
+        int nterms = 0;
+        for (Angle a: angles) {
+            double alpha = a.angle();
+            double lamda = a.oppositeEdge().logLength();
+            double cl2 = Clausen.cl2(2*alpha);
+            double u = a.vertex().getU();
+            double term = alpha*lamda + cl2 - Math.PI*u;
+            assert !Double.isInfinite(term): "infinite term in value";
+            assert !Double.isNaN(term): "NaN term in value";
+            terms[nterms++] = term;
+        }
+        for (Vertex v: vertices) {
+            double term = v.getTarget()*v.getU();
+            assert !Double.isInfinite(term): "infinite term in value";
+            assert !Double.isNaN(term): "NaN term in value";
+            terms[nterms++] = term;
+        }
+        assert nterms == terms.length: "Wrong number of terms";
+        return terms;
+    }
+
+    private double preciseSum(double[] terms) {
+        Arrays.sort(terms);
+        double sum = 0;
+        if (terms[0] >= 0) { // all non-negative
+            for (int i = 0; i < terms.length; ++i)
+                sum += terms[i];
+        }
+        else if (terms[terms.length - 1] <= 0) { // all non-positive
+            for (int i = terms.length - 1; i >= 0; --i)
+                sum += terms[i];
+        }
+        else { // mixed sign
+            for (int left = 0, right = terms.length; left < right; ) {
+                if (sum >= 0) sum += terms[left++];
+                else sum += terms[--right];
+            }
+        }
+        return sum;
     }
 
 }

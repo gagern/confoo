@@ -11,6 +11,8 @@ public interface Functional {
 
     public double value();
 
+    public double valueChange();
+
     public Vector gradient(Vector g);
 
     public Matrix hessian(Matrix h);
