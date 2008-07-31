@@ -115,7 +115,7 @@ public class Conformal<V> implements Runnable {
 
     protected void configureNewton(Newton newton) {
         newton.setNorm(Newton.ExitCondition.GRADIENT, Vector.Norm.Infinity);
-        newton.setEpsilon(Newton.ExitCondition.GRADIENT, 1e-15);
+        newton.setEpsilon(Newton.ExitCondition.GRADIENT, 2e-14);
         newton.setEpsilon(Newton.ExitCondition.ESTIMATE, 0);
         newton.setEpsilon(Newton.ExitCondition.DELTA, 0);
         newton.setMaxIterations(128);

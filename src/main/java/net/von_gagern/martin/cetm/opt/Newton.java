@@ -55,9 +55,29 @@ public class Newton implements Callable<Vector> {
 
     private IterativeSolver solver;
 
+    /**
+     * Parameter for backtracking line search.
+     * This factor gives the proportion of the value change predicted
+     * by the first order derivative that a line search value must be
+     * below in order for the search to terminate. 0 < alpha < 0.5.
+     */
     private double alpha = 0.25;
 
+    /**
+     * Backtracking line search step factor.
+     * This factor determines the step size for backtracking line
+     * search. The step size will be multiplied by this factor in each
+     * iteration. 0 < beta < 1.
+     */
     private double beta = 0.75;
+
+    /**
+     * Minimum backtracking line search step size factor.
+     * This determines the minimum step size used during backtracking
+     * line search, in units of the undamped newton step.
+     * 0 <= gamma <= beta.
+     */
+    private double gamma = 0.01;
 
     private Vector.Norm gradNorm = Vector.Norm.Two;
 
@@ -126,6 +146,7 @@ public class Newton implements Callable<Vector> {
             double deltaNormValue = delta.norm(deltaNorm);
             logger.debug("Delta norm: " + deltaNormValue);
             for (double t = 1; true; t *= beta) {
+                if (t < gamma) t = gamma;
                 logger.debug("Line search t: " + t);
                 if (t*deltaNormValue <= deltaEpsilon) {
                     setExitCondition(ExitCondition.DELTA, t*deltaNormValue);
@@ -135,7 +156,7 @@ public class Newton implements Callable<Vector> {
                 x2.add(t, delta);                     // x2 = x + t*delta
                 f.setArgument(x2);
                 double change = f.valueChange();
-                if (change <= alpha*t*lamdaSq || t < 0.1)
+                if (change <= alpha*t*lamdaSq || t == gamma)
                     break;
             }
             Vector x1 = x2;                           // swap x and x2
@@ -207,9 +228,16 @@ public class Newton implements Callable<Vector> {
         maxIterations = max;
     }
 
-    public void lineSearchParameters(double alpha, double beta) {
+    public void lineSearchParameters(double alpha, double beta, double gamma) {
+        if (alpha <= 0 || alpha >= 0.5)
+            throw new IllegalArgumentException("0 < alpha < 0.5");
+        if (beta <= 0 || beta >= 1)
+            throw new IllegalArgumentException("0 < beta < 1");
+        if (gamma < 0 || gamma > beta)
+            throw new IllegalArgumentException("0 <= gamma <= beta");
         this.alpha = alpha;
         this.beta = beta;
+        this.gamma = gamma;
     }
 
     public Vector call() {
