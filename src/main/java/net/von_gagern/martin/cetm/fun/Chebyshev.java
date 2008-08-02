@@ -20,6 +20,9 @@ package net.von_gagern.martin.cetm.fun;
  */
 public class Chebyshev {
 
+    /**
+     * Constant used to decide the use of the Reinsch modification
+     */
     private static double TEST = 0.6;
 
     /**
