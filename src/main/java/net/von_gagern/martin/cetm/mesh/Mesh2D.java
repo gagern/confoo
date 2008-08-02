@@ -12,10 +12,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A 2D triangle mesh.<p>
+ *
+ * Vertices of this mesh are identified by their coordinates, not
+ * object identity.
+ *
+ * @author <a href="mailto:Martin.vGagern@gmx.net">Martin von Gagern</a>
+ * @since 1.0
+ */
 public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
 
+    /**
+     * List of all mesh triangles.
+     */
     private List<Triangle2D> ts;
 
+    /**
+     * Construct 2D mesh from a located mesh.
+     * The z coordinates of the input mesh will be simply ignored.
+     * After construction the two meshes will be independent.
+     * @param mesh the mesh to be copied
+     */
     public <V> Mesh2D(LocatedMesh<V> mesh) {
         ts = new ArrayList<Triangle2D>();
         Map<V, Vertex2D> vm = new HashMap<V, Vertex2D>();
@@ -36,6 +54,11 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
         }
     }
 
+    /**
+     * Construct 2D mesh from collection of triangles.
+     * After construction the mesh will be independent.
+     * @param mesh the triangles making up the mesh
+     */
     public Mesh2D(Collection<? extends CorneredTriangle<? extends Point2D>>
                   mesh) {
         ts = new ArrayList<Triangle2D>();
@@ -58,30 +81,64 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
         }
     }
 
+    /**
+     * Return iterator over all triangles.
+     * @return an iterator over the triangles of the mesh
+     */
     public Iterator<Triangle2D> iterator() {
         return ts.iterator();
     }
 
+    /**
+     * Determine edge length.
+     * @param v1 one vertex
+     * @param v2 a second vertex
+     * @return the distance between the vertices
+     */
     public double edgeLength(Vertex2D v1, Vertex2D v2) {
         return v1.distance(v2);
     }
 
+    /**
+     * Get x coordinate of vertex.
+     * @param v a vertex
+     * @return the x coordinate of <code>v</code>
+     */
     public double getX(Vertex2D v) {
         return v.getX();
     }
 
+    /**
+     * Get y coordinate of vertex.
+     * @param v a vertex
+     * @return the y coordinate of <code>v</code>
+     */
     public double getY(Vertex2D v) {
         return v.getY();
     }
 
+    /**
+     * Get z coordinate of vertex.
+     * As this is a 2D mesh, this method will always return zero.
+     * @param v a vertex
+     * @return zero
+     */
     public double getZ(Vertex2D v) {
         return 0;
     }
 
+    /**
+     * Retrieve collection of triangles.
+     * @return the list of all triangles
+     */
     public List<Triangle2D> getTriangles() {
         return ts;
     }
 
+    /**
+     * Retrieve collection of all edges.
+     * @return the set of all edges
+     */
     public Set<Edge2D> getEdges() {
         Set<Edge2D> es = new HashSet<Edge2D>(ts.size()*3);
         for (Triangle2D t: ts) {
@@ -92,6 +149,11 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
         return es;
     }
 
+    /**
+     * Retrieve collection of all interior edges.
+     * Interior edges are edges incident to more than one triangle.
+     * @return the set of all interior edges
+     */
     public Set<Edge2D> getInteriorEdges() {
         Set<Edge2D> edges = new HashSet<Edge2D>(ts.size()*3);
         Set<Edge2D> interior = new HashSet<Edge2D>(ts.size()*3/2);
@@ -104,6 +166,11 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
         return interior;
     }
 
+    /**
+     * Retrieve collection of all boundary edges.
+     * Boundary edges are edges incident to only one triangle.
+     * @return the set of all boundary edges
+     */
     public Set<Edge2D> getBoundaryEdges() {
         Set<Edge2D> edges = new HashSet<Edge2D>(ts.size()*3);
         Set<Edge2D> interior = new HashSet<Edge2D>(ts.size()*3/2);
@@ -117,6 +184,12 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
         return edges;
     }
 
+    /**
+     * Retrieve boundary shape.
+     * This is the shape consisting of all polygones made up by
+     * boundary edges.
+     * @return the boundary shape
+     */
     public Shape getBoundary() {
         Set<Edge2D> edges = getBoundaryEdges();
         Map<Vertex2D, PathSegment> segmentEndpoints =
@@ -149,30 +222,66 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
         return path;
     }
 
+    /**
+     * Helper class used to order and manage boundary segments.
+     * @see Mesh2D#getBoundary()
+     * @author <a href="mailto:Martin.vGagern@gmx.net">Martin von Gagern</a>
+     */
     private static class PathSegment {
 
+        /**
+         * First vertex.
+         */
         private Vertex2D p1;
 
+        /**
+         * Second vertex.
+         */
         private Vertex2D p2;
 
+        /**
+         * Preceding segment.
+         */
         private PathSegment s1;
 
+        /**
+         * Following segment.
+         */
         private PathSegment s2;
 
+        /**
+         * Union representant.
+         */
         private PathSegment unionRep;
 
+        /**
+         * Construct path segment for two endpoints.
+         * @param p1 first endpoint
+         * @param p2 second endpoint
+         */
         public PathSegment(Vertex2D p1, Vertex2D p2) {
             this.p1 = p1;
             this.p2 = p2;
             unionRep = this;
         }
 
+        /**
+         * Join two path segments
+         * @param s the path segment to join to this one
+         * @param p the vertex common to both segments
+         * @return whether a polygon was closed by this join
+         */
         public boolean join(PathSegment s, Vertex2D p) {
             halfJoin(s, p);
             s.halfJoin(this, p);
             return union(s);
         }
 
+        /**
+         * Perform one half of a join.
+         * @param s the path segment to join to this one
+         * @param p the vertex common to both segments
+         */
         private void halfJoin(PathSegment s, Vertex2D p) {
             if (p.equals(p1)) {
                 s1 = s;
@@ -183,6 +292,11 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
             }
         }
 
+        /**
+         * Unite two sequences of path segments.
+         * @param that a segment from the sequence to be united with this one
+         * @boolean whether the two sequences already were united
+         */
         private boolean union(PathSegment that) {
             PathSegment u1 = this.find(), u2 = that.find();
             if (u1 == u2) return true;
@@ -190,6 +304,10 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
             return false;
         }
 
+        /**
+         * Find representant for sequence of path segments.
+         * @return a unique object representing the whole united sequence
+         */
         private PathSegment find() {
             if (unionRep != this)
                 unionRep = unionRep.find();
