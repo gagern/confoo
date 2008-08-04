@@ -10,7 +10,7 @@
     </layout>
   </appender>
 
-  <category name="net.von_gagern.martin.cetm">
+  <category name="net.von_gagern.martin.confoo">
     <priority value="debug"/>
   </category>
 
