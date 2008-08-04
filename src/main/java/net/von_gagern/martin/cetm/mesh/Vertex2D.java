@@ -10,6 +10,9 @@ import java.awt.geom.Point2D;
  * exactly agree in their coordinates. This contrasts with the
  * implementation in the super class, which inherits the equality
  * comparison from <code>Object</code>.
+ *
+ * @author <a href="mailto:Martin.vGagern@gmx.net">Martin von Gagern</a>
+ * @since 1.0
  */
 public class Vertex2D extends Point2D.Double {
 

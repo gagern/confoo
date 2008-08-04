@@ -3,6 +3,23 @@ package net.von_gagern.martin.cetm.conformal;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Boundary condition with fixed boundary curvature.<p>
+ *
+ * Selected corners may be given in form of a map from original input
+ * vertex representants to angles measured in radians. These angles
+ * will be set as target values for the corresponding internal
+ * vertices.<p>
+
+ * For vertices not present in the map, the defauls will be based upon
+ * vertex kind. Interior vertices will be assigned a target angle of
+ * 2&#960;, boundary vertices (incident with both boundary and
+ * internal edges) &#960; and corner vertices (incident to boundary
+ * edges only) &#960;/2.<p>
+ *
+ * @author <a href="mailto:Martin.vGagern@gmx.net">Martin von Gagern</a>
+ * @since 1.0
+ */
 class FixedBoundaryCurvature<C> extends BoundaryCondition<C> {
 
     private Map<? extends C, Double> angles;

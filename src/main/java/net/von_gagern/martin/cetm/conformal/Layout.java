@@ -6,16 +6,37 @@ import java.util.Queue;
 
 import org.apache.log4j.Logger;
 
+/**
+ * Calculate vertex coordinates from edge lengths.
+ *
+ * @author <a href="mailto:Martin.vGagern@gmx.net">Martin von Gagern</a>
+ * @since 1.0
+ */
 class Layout implements Runnable {
 
+    /**
+     * Log4j logger for customizable logging and reporting.
+     */
     private final Logger logger = Logger.getLogger(Layout.class);
 
+    /**
+     * The list if all triangles.
+     */
     private final List<Triangle> triangles;
 
+    /**
+     * Construct layouter for given mesh.
+     * @param mesh the mesh to be layed out.
+     * @see #layout()
+     */
     public Layout(InternalMesh mesh) {
         triangles = mesh.getTriangles();
     }
 
+    /**
+     * Calculate layout by determining suitable vertex coordinates.
+     * This is the main method of this class.
+     */
     public void layout() {
         // Sadly ArrayDeque was added only in java 1.6, so we won't use it yet
         Queue<Triangle> q = new LinkedList<Triangle>();
@@ -38,11 +59,21 @@ class Layout implements Runnable {
         }
     }
 
+    /**
+     * Reset all triangles to unvisited state.
+     */
     private void clearIterFlags() {
         for (Triangle t: triangles)
             t.clearIterFlag();
     }
 
+    /**
+     * Find the triangle to start with.
+     * To keep distances from the starting point and therefore errors
+     * low, the starting triangle should be far inside near the
+     * combinatoric center of the mesh. This is achieved through a BFS
+     * starting at all boundary triangles.
+     */
     private Triangle findStart() {
         // Sadly ArrayDeque was added only in java 1.6, so we won't use it yet
         Queue<Triangle> q = new LinkedList<Triangle>();
@@ -73,6 +104,10 @@ class Layout implements Runnable {
         }
     }
 
+    /**
+     * Layout the initial triangle.
+     * @param t the first triangle to be layed out
+     */
     private void layoutStart(Triangle t) {
         Angle a = t.getAngles().get(0);
         Vertex v1 = a.vertex(), v2 = a.nextVertex(), v3 = a.prevVertex();
@@ -146,7 +181,24 @@ class Layout implements Runnable {
                      " to (" + x + ", " + y + ")");
     }
 
+    /**
+     * Adjust edge angle for orientation.
+     * If the edges have different orientation with respect to the
+     * vertex at their intersection, i.e. one points toward that
+     * vertex and the other away from it, the angle will be rotated by
+     * &#960;. The method will also normalize the angle to the range
+     * (-&#960;, &#960;].
+     *
+     * @param angle the angle the edge of interest would have if both
+     *              edges were pointing away from <code>v</code>
+     * @param e1 the first edge involved in angle calculation
+     * @param e2 the second edge involved in angle calculation
+     * @param v the vertex incident to both edges
+     * @return the adjusted and normalized angle
+     */
     private double edgeAngle(double angle, Edge e1, Edge e2, Vertex v) {
+        assert e1.getV1() == v || e1.getV2() == v: "v must be endpoint of e1";
+        assert e2.getV1() == v || e2.getV2() == v: "v must be endpoint of e2";
         if ((e1.getV1() == v) != (e2.getV1() == v)) {
             if (angle > 0) angle -= Math.PI;
             else angle += Math.PI;
@@ -156,6 +208,14 @@ class Layout implements Runnable {
         return angle;
     }
 
+    /**
+     * Runnable interface to the <code>layout</code> method.<p>
+     *
+     * Any application not using multiple threads should rather call
+     * <code>layout</code> directly.
+     *
+     * @see #layout()
+     */
     public void run() {
         layout();
     }

@@ -14,20 +14,20 @@ public class TestObjs extends AbstractTestCase {
 
     private final Logger logger = Logger.getLogger(TestObjs.class);
 
-    private Conformal<Integer>
+    private LocatedMesh<Integer>
         runWithFixedBoundary(String objName, double... angles)
         throws MeshException, IOException
     {
         Conformal<Integer> c = conformalWithFixedBoundary(objName, angles);
         try {
-            c.transform();
+            LocatedMesh<Integer> res = c.transform();
+            logResult(res);
+            return res;
         }
         catch (MeshException e) {
             logger.error(e.toString());
             throw e;
         }
-        logResult(c);
-        return c;
     }
 
     private double normalizeAngle(double a) {
@@ -64,9 +64,7 @@ public class TestObjs extends AbstractTestCase {
     @Test public void testOneRightIsosceles()
         throws MeshException, IOException
     {
-        Conformal<Integer> c;
-        c = runWithFixedBoundary("oneRightIsosceles.obj", 60., 60., 60.);
-        LocatedMesh<Integer> m = c.getMesh();
+        LocatedMesh<Integer> m = runWithFixedBoundary("oneRightIsosceles.obj", 60., 60., 60.);
         assertAngle(m, 2, 1, 3, 60.);
         assertAngle(m, 3, 2, 1, 60.);
         assertAngle(m, 1, 3, 2, 60.);
@@ -79,8 +77,8 @@ public class TestObjs extends AbstractTestCase {
 
     @Test public void test1Lengths() throws MeshException, IOException {
         Conformal<Integer> c;
-        c = runWithFixedBoundary("test1.obj", 90., 90., 90., 90.);
-        LocatedMesh<Integer> m = c.getMesh();
+        c = conformalWithFixedBoundary("test1.obj", 90., 90., 90., 90.);
+        LocatedMesh<Integer> m = c.transform();
         assertAngle(m, 2, 1, 4, 90.);
         assertAngle(m, 3, 2, 1, 90.);
         assertAngle(m, 4, 3, 2, 90.);
@@ -89,9 +87,7 @@ public class TestObjs extends AbstractTestCase {
     }
 
     @Test public void test1Coordinates() throws MeshException, IOException {
-        Conformal<Integer> c;
-        c = runWithFixedBoundary("test1.obj", 90., 90., 90., 90.);
-        LocatedMesh<Integer> m = c.getMesh();
+        LocatedMesh<Integer> m = runWithFixedBoundary("test1.obj", 90., 90., 90., 90.);
         AffineTransform t = transformToUnitBox(m, 1, 2, 4);
         Point2D.Double p = new Point2D.Double();
         for (int i = 1; i <= 9; ++i) {

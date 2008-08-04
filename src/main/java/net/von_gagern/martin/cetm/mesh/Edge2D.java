@@ -9,6 +9,9 @@ import java.awt.geom.Point2D;
  * This implementation of an edge provides equality comparison based
  * on the coordinates of the endpoints. It can therefore be used to
  * identify edges shared between different triangles.
+ *
+ * @author <a href="mailto:Martin.vGagern@gmx.net">Martin von Gagern</a>
+ * @since 1.0
  */
 public class Edge2D extends Line2D.Double {
 

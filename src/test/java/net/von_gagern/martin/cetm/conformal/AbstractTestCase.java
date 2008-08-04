@@ -1,6 +1,5 @@
 package net.von_gagern.martin.cetm.conformal;
 
-import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -9,6 +8,7 @@ import java.util.MissingResourceException;
 import org.apache.log4j.Logger;
 import static org.junit.Assert.*;
 
+import net.von_gagern.martin.cetm.mesh.LocatedMesh;
 import net.von_gagern.martin.cetm.mesh.MeshException;
 import net.von_gagern.martin.cetm.mesh.ObjFormat;
 
@@ -56,16 +56,14 @@ abstract class AbstractTestCase {
         return am;
     }
 
-    protected void logResult(Conformal c) throws IOException {
+    protected void logResult(LocatedMesh<Integer> mesh) throws IOException {
         Logger logger = Logger.getLogger(AbstractTestCase.class);
         if (!logger.isDebugEnabled()) return;
-        ObjFormat obj = new ObjFormat(c.getMesh());
-        CharArrayWriter w = new CharArrayWriter();
-        w.write("Resulting obj mesh:\n");
-        obj.write(w);
-        String str = w.toString();
-        if (str.length() <= maxOutLen)
-            logger.debug(str);
+        ObjFormat obj = new ObjFormat(mesh);
+        StringBuilder buf = new StringBuilder("Resulting obj mesh:\n");
+        obj.write(buf);
+        if (buf.length() <= maxOutLen)
+            logger.debug(buf.toString());
     }
 
     protected void checkEdgeLengths(InternalMesh<?> mesh) {

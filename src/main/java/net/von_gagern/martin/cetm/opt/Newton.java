@@ -76,7 +76,7 @@ public class Newton implements Runnable {
     private static final double EPSILON = 1e-14;
 
     /**
-     * Log4J logger for customizable logging and reporting.
+     * Log4j logger for customizable logging and reporting.
      */
     private final Logger logger = Logger.getLogger(Newton.class);
 
@@ -432,9 +432,9 @@ public class Newton implements Runnable {
      * thread. However, as a <code>run</code> method may not throw any
      * checked exceptions, special care has to be taken to catch these
      * exceptions later on. The main thread that was waiting for the
-     * result should call <code>throwExceptions</code> to re-throw any
-     * exceptions that occurred during execution in a different
-     * thread.<p>
+     * result should call <code>throwInterceptedExceptions</code> to
+     * re-throw any exceptions that occurred during execution in a
+     * different thread.<p>
      *
      * Any application not using multiple threads should rather call
      * <code>optimize</code> directly to deal with exceptions more
@@ -443,7 +443,7 @@ public class Newton implements Runnable {
      * @throws IllegalStateException if there is an uncleared
      *         exception from a previous invocation
      * @see #optimize()
-     * @see #throwExceptions()
+     * @see #throwInterceptedExceptions()
      */
     public void run() {
         if (isncException != null)
@@ -469,7 +469,7 @@ public class Newton implements Runnable {
      * which occurred during the execution of <code>optimize</code>.
      * @see #run()
      */
-    public void throwExceptions()
+    public void throwInterceptedExceptions()
         throws IterativeSolverNotConvergedException
     {
         IterativeSolverNotConvergedException isncE = isncException;
