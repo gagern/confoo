@@ -9,7 +9,7 @@
   <groupId>net.von-gagern.martin</groupId>
   <artifactId>confoo</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 
   <name>Confoo</name>
   <description>
