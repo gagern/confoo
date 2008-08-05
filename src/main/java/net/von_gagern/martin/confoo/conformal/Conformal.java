@@ -49,6 +49,11 @@ public class Conformal<V> implements Callable<LocatedMesh<V>> {
      */
     private BoundaryCondition boundaryCondition;
 
+    /**
+     * Bound for the maximum angle error.
+     */
+    private double angleErrorBound = 2e-14;
+
     /*********************************************************************
      * Costruction
      ********************************************************************/
@@ -82,6 +87,25 @@ public class Conformal<V> implements Callable<LocatedMesh<V>> {
      ********************************************************************/
 
     /**
+     * Set the maximal angle error during transformation.
+     * The default is 2e-14.
+     * @param epsilon the new error bound
+     * @see #getAngleErrorBound()
+     */
+    public void setAngleErrorBound(double epsilon) {
+        angleErrorBound = epsilon;
+    }
+
+    /**
+     * Get the maximal angle error during transformation.
+     * @return the bound for the maximum angle error
+     * @see #setAngleErrorBound(double)
+     */
+    public double getAngleErrorBound() {
+        return angleErrorBound;
+    }
+
+    /**
      * Set boundary condition to given angles.<p>
      *
      * All vertices contained as keys in the map will be assigned a
@@ -92,6 +116,7 @@ public class Conformal<V> implements Callable<LocatedMesh<V>> {
      * with corner angles specified by the map.
      *
      * @param angles the map of fixed corner angles
+     * @see #isometricBoundaryCondition()
      */
     public void fixedBoundaryCurvature(Map<? extends V, Double> angles) {
         boundaryCondition = new FixedBoundaryCurvature<V>(angles,
@@ -104,6 +129,8 @@ public class Conformal<V> implements Callable<LocatedMesh<V>> {
      * All boundary and corner vertices will be fixed in order to keep the
      * lengths of boundary edges unmodified. Internal vertices will be
      * assigned a target angle sum of 2&#960;, resulting in a flat mesh.
+     *
+     * @see #fixedBoundaryCurvature(Map)
      */
     public void isometricBoundaryCondition() {
         boundaryCondition = new IsometricBoundaryCondition();
@@ -233,7 +260,7 @@ public class Conformal<V> implements Callable<LocatedMesh<V>> {
      */
     protected void configureNewton(Newton newton) {
         newton.setNorm(Newton.ExitCondition.GRADIENT, Vector.Norm.Infinity);
-        newton.setEpsilon(Newton.ExitCondition.GRADIENT, 2e-14);
+        newton.setEpsilon(Newton.ExitCondition.GRADIENT, angleErrorBound);
         newton.setEpsilon(Newton.ExitCondition.ESTIMATE, 0);
         newton.setEpsilon(Newton.ExitCondition.DELTA, 0);
         newton.setMaxIterations(128);
