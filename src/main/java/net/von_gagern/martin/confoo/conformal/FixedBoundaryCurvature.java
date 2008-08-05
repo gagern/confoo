@@ -32,7 +32,7 @@ class FixedBoundaryCurvature<C> extends BoundaryCondition<C> {
         this.vm = vm;
     }
 
-    public void setTargets(InternalMesh<C> mesh) {
+    @Override public void setTargets(InternalMesh<C> mesh) {
         // initialize target angles
         for (Vertex v: mesh.getVertices()) {
             switch (v.kind) {

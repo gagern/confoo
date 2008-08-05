@@ -98,6 +98,17 @@ public class Conformal<V> implements Callable<LocatedMesh<V>> {
                                                           mesh.getVertexMap());
     }
 
+    /**
+     * Set boundary condition for preserved boundary edge lengths.<p>
+     *
+     * All boundary and corner vertices will be fixed in order to keep the
+     * lengths of boundary edges unmodified. Internal vertices will be
+     * assigned a target angle sum of 2&#960;, resulting in a flat mesh.
+     */
+    public void isometricBoundaryCondition() {
+        boundaryCondition = new IsometricBoundaryCondition();
+    }
+
     /*********************************************************************
      * Calculate conformal mapping
      ********************************************************************/

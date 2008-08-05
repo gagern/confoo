@@ -136,6 +136,19 @@ public class TestObjs extends AbstractTestCase {
         }
     }
 
+    @Test public void test1Isometric() throws MeshException, IOException {
+        LocatedMesh<Integer> in = objResource("test1.obj");
+        Conformal<Integer> c = Conformal.getInstance(in);
+        c.isometricBoundaryCondition();
+        LocatedMesh<Integer> out = c.transform();
+        checkEdgeLengths(c.getInternalMesh());
+        for (Edge e: c.getInternalMesh().getEdges()) {
+            Integer v1 = (Integer)e.v1.rep, v2 = (Integer)e.v2.rep;
+            assertEquals("Edge " + e, in.edgeLength(v1, v2),
+                         out.edgeLength(v1, v2), lengthTolerance);
+        }
+    }
+
     public void testHyp() throws MeshException, IOException {
         runWithFixedBoundary("hyp.obj", 60., 60., 60.);
     }
