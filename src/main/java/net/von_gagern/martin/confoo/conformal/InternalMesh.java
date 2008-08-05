@@ -96,7 +96,7 @@ class InternalMesh<V> implements LocatedMesh<Vertex> {
             }
 
             // handle triangle
-            Triangle t = new Triangle(tvs[0], tvs[1], tvs[2]);
+            Triangle t = new Triangle();
             ts.add(t);
 
             // handle edges
@@ -115,7 +115,6 @@ class InternalMesh<V> implements LocatedMesh<Vertex> {
                 }
                 tes[i] = e;
             }
-            t.setEdges(tes[0], tes[1], tes[2]);
 
             // handle angles
             for (int i = 0; i < 3; ++i) {

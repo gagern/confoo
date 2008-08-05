@@ -13,10 +13,6 @@ import net.von_gagern.martin.confoo.mesh.CorneredTriangle;
  */
 class Triangle implements CorneredTriangle<Vertex> {
 
-    // private final List<Vertex> vs;
-
-    // private List<Edge> es;
-
     /**
      * List of the three angles of a triangle.
      */
@@ -30,15 +26,7 @@ class Triangle implements CorneredTriangle<Vertex> {
     /**
      * Construct a triangle.
      */
-    public Triangle(Vertex v1, Vertex v2, Vertex v3) {
-        // vs = Arrays.asList(v1, v2, v3);
-    }
-
-    /**
-     * Set the edges of the triangle.
-     */
-    public void setEdges(Edge e1, Edge e2, Edge e3) {
-        // es = Arrays.asList(e1, e2, e3);
+    public Triangle() {
     }
 
     /**
@@ -58,7 +46,6 @@ class Triangle implements CorneredTriangle<Vertex> {
      * @throws IndexOutOfBoundsException unless 0 <= i < 3
      */
     public Vertex getCorner(int i) {
-        // return vs.get(i);
         return as.get(i).vertex;
     }
 
@@ -67,7 +54,6 @@ class Triangle implements CorneredTriangle<Vertex> {
      * @return a list of the three vertices of the triangle
      */
     public List<Vertex> getVertices() {
-        // return vs;
         return new VertexList();
     }
 
@@ -79,7 +65,6 @@ class Triangle implements CorneredTriangle<Vertex> {
      * @return a list of the three edges of the triangle
      */
     public List<Edge> getEdges() {
-        // return es;
         return new EdgeList();
     }
 
