@@ -149,10 +149,6 @@ public class TestObjs extends AbstractTestCase {
         }
     }
 
-    public void testHyp() throws MeshException, IOException {
-        runWithFixedBoundary("hyp.obj", 60., 60., 60.);
-    }
-
     private void assertRange(String msg, double min, double max,
                              double actual) {
         if (Double.isNaN(actual) || actual < min || actual > max)
