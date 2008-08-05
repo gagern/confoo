@@ -11,7 +11,7 @@
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Conformal Equivalence of Triangle Meshes toolkit</name>
+  <name>Confoo</name>
   <description>
     Toolkit to calculate a discretely conformal triangle mesh for a
     given input triangle mesh.
@@ -23,6 +23,15 @@
     <artifactId>abstract-java5-project</artifactId>
     <version>1.0</version>
   </parent>
+
+  <licenses>
+    <license>
+      <name>GPL 3</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0-standalone.html</url>
+      <distribution>repo</distribution>
+      <comments>later version at your option</comments>
+    </license>
+  </licenses>
 
   <repositories>
     <repository>
@@ -115,5 +124,58 @@
       </plugin>
     </plugins>
   </build>
+
+  <developers>
+    <developer>
+      <id>gagern</id>
+      <name>Martin von Gagern</name>
+      <url>http://martin.von-gagern.net/</url>
+      <organization>TU München</organization>
+      <organizationUrl>http://www.tum.de/</organizationUrl>
+      <roles>
+	<role>main developer</role>
+      </roles>
+    </developer>
+  </developers>
+  <contributors>
+    <contributor>
+      <name>Boris Springborn</name>
+      <url>http://www.math.tu-berlin.de/~springb/</url>
+      <organization>TU Berlin</organization>
+      <organizationUrl>http://www.tu-berlin.de/</organizationUrl>
+      <roles>
+	<role>author of scientific paper</role>
+	<role>hints for implementation</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Peter Schröder</name>
+      <url>http://www.multires.caltech.edu/~ps/</url>
+      <organization>Caltech</organization>
+      <organizationUrl>http://www.caltech.edu/</organizationUrl>
+      <roles>
+	<role>author of scientific paper</role>
+	<role>hints for implementation</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Ulrich Pinkall</name>
+      <url>http://www.math.tu-berlin.de/~pinkall/</url>
+      <organization>TU Berlin</organization>
+      <organizationUrl>http://www.tu-berlin.de/</organizationUrl>
+      <roles>
+	<role>author of scientific paper</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Allan J. MacLeod</name>
+      <email>macl_ms0@paisley.ac.uk</email>
+      <organization>University of Paisley</organization>
+      <organizationUrl>http://www.paisley.ac.uk/</organizationUrl>
+      <roles>
+	<role>original author of ported Fortran code</role>
+      </roles>
+    </contributor>
+  </contributors>
 
 </project>
