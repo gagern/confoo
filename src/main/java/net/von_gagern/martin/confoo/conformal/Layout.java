@@ -110,30 +110,30 @@ class Layout implements Runnable {
      */
     private void layoutStart(Triangle t) {
         Angle a = t.getAngles().get(0);
-        Vertex v1 = a.vertex(), v2 = a.nextVertex(), v3 = a.prevVertex();
-        Edge e12 = a.nextEdge(), e13 = a.prevEdge(), e23 = a.oppositeEdge();
-        double l12 = e12.length(), l13 = e13.length(), l23 = e23.length();
-        double alpha = a.angle();
+        Vertex v1 = a.vertex, v2 = a.nextVertex, v3 = a.prevVertex;
+        Edge e12 = a.nextEdge, e13 = a.prevEdge, e23 = a.oppositeEdge;
+        double l12 = e12.length, l13 = e13.length, l23 = e23.length;
+        double alpha = a.angle;
         Angle b = t.getNextAngle(v1);
-        double beta = b.angle();
+        double beta = b.angle;
 
         // set locations
-        v1.setLocation(0, 0);
-        v2.setLocation(l12, 0);
-        v3.setLocation(l13*Math.cos(alpha), l13*Math.sin(alpha));
-        logger.trace("Vertex " + v1.getRep() + " at location (0,0)");
-        logger.trace("Vertex " + v2.getRep() + " at location (" +
+        v1.offerLocation(0, 0);
+        v2.offerLocation(l12, 0);
+        v3.offerLocation(l13*Math.cos(alpha), l13*Math.sin(alpha));
+        logger.trace("Vertex " + v1.rep + " at location (0,0)");
+        logger.trace("Vertex " + v2.rep + " at location (" +
                      v2.getX() + ",0)");
-        logger.trace("Vertex " + v3.getRep() + " at location (" +
+        logger.trace("Vertex " + v3.rep + " at location (" +
                      v3.getX() + "," + v3.getY() + ")");
 
         // set angles
-        if (e12.getV1() == v1) e12.setAngle(0);
-        else e12.setAngle(Math.PI);
-        if (e13.getV1() == v1) e13.setAngle(alpha);
-        else e13.setAngle(alpha - Math.PI);
-        if (e23.getV1() == v2) e23.setAngle(Math.PI - beta);
-        else e23.setAngle(-beta);
+        if (e12.v1 == v1) e12.angle = 0;
+        else e12.angle = Math.PI;
+        if (e13.v1 == v1) e13.angle = alpha;
+        else e13.angle = alpha - Math.PI;
+        if (e23.v1 == v2) e23.angle = Math.PI - beta;
+        else e23.angle = -beta;
     }
 
     /**
@@ -158,19 +158,19 @@ class Layout implements Runnable {
 
         Vertex c = t.getOppositeVertex(e);
         Angle bac = t.getNextAngle(c), cba = t.getPrevAngle(c);
-        Vertex a = bac.vertex(), b = cba.vertex();
-        Edge ca = bac.prevEdge(), bc = cba.nextEdge();
-        double alpha = bac.angle(), beta = cba.angle();
-        double abAngle = e.getAngle();
+        Vertex a = bac.vertex, b = cba.vertex;
+        Edge ca = bac.prevEdge, bc = cba.nextEdge;
+        double alpha = bac.angle, beta = cba.angle;
+        double abAngle = e.angle;
 
         double caAngle = edgeAngle(abAngle + alpha, e, ca, a);
         double bcAngle = edgeAngle(abAngle - beta, e, bc, b);
         ca.offerAngle(caAngle);
         bc.offerAngle(bcAngle);
 
-        double caLen = ca.length(), bcLen = bc.length();
-        if (ca.getV1() != a) caLen = -caLen;
-        if (bc.getV1() != b) bcLen = -bcLen;
+        double caLen = ca.length, bcLen = bc.length;
+        if (ca.v1 != a) caLen = -caLen;
+        if (bc.v1 != b) bcLen = -bcLen;
         double caX = a.getX() + caLen*Math.cos(caAngle);
         double caY = a.getY() + caLen*Math.sin(caAngle);
         double bcX = b.getX() + bcLen*Math.cos(bcAngle);
@@ -197,9 +197,9 @@ class Layout implements Runnable {
      * @return the adjusted and normalized angle
      */
     private double edgeAngle(double angle, Edge e1, Edge e2, Vertex v) {
-        assert e1.getV1() == v || e1.getV2() == v: "v must be endpoint of e1";
-        assert e2.getV1() == v || e2.getV2() == v: "v must be endpoint of e2";
-        if ((e1.getV1() == v) != (e2.getV1() == v)) {
+        assert e1.v1 == v || e1.v2 == v: "v must be endpoint of e1";
+        assert e2.v1 == v || e2.v2 == v: "v must be endpoint of e2";
+        if ((e1.v1 == v) != (e2.v1 == v)) {
             if (angle > 0) angle -= Math.PI;
             else angle += Math.PI;
         }

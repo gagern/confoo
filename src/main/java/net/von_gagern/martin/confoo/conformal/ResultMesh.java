@@ -88,7 +88,7 @@ class ResultMesh<V> implements LocatedMesh<V> {
      * @return the corresponding external representant
      */
     private V getRep(Vertex v) {
-        return (V)v.getRep();
+        return (V)v.rep;
     }
 
     /**

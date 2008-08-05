@@ -13,53 +13,53 @@ class Edge {
     /**
      * First endpoint of the edge.
      */
-    private final Vertex v1;
+    final Vertex v1;
 
     /**
      * Second endpoint of the edge.
      */
-    private final Vertex v2;
+    final Vertex v2;
 
     /**
      * First triangle incident to the edge. This is the triangle that
      * has v1 and v2 following one another in this order in its cyclic
      * vertex order.
      */
-    private final Triangle t1;
+    final Triangle t1;
 
     /**
      * Second triangle incident to the edge. This is the triangle that
      * has v2 and v1 following one another in this order in its cyclic
      * vertex order.
      */
-    private Triangle t2;
+    Triangle t2;
 
     /**
      * Original length in the input mesh.
      */
-    private final double origLength;
+    final double origLength;
 
     /**
      * Twice the logarithm of the original length.
      */
-    private final double origLogLength;
+    final double origLogLength;
 
     /**
      * Twice the logarithm of the current length.
      */
-    private double logLength;
+    double logLength;
 
     /**
      * The current length.
      */
-    private double length;
+    double length;
 
     /**
      * The angle of this edge.
      * This is the angle between the x axis and this edge and is set
      * during the layout phase.
      */
-    private double angle = Double.NaN;
+    double angle = Double.NaN;
 
     /**
      * Construct edge.
@@ -67,7 +67,7 @@ class Edge {
      * @param v2 second vertex
      * @param t1 triangle having v1 and v2 in this order
      */
-    public Edge(Vertex v1, Vertex v2, Triangle t1, double length) {
+    Edge(Vertex v1, Vertex v2, Triangle t1, double length) {
         this.v1 = v1;
         this.v2 = v2;
         this.t1 = t1;
@@ -86,7 +86,7 @@ class Edge {
      * @throws MeshException for inconsistent orientation
      *         of if called multiple times
      */
-    public void addTriangle(Vertex v1, Vertex v2, Triangle t2)
+    void addTriangle(Vertex v1, Vertex v2, Triangle t2)
         throws MeshException
     {
         if (!(this.v1.equals(v1) && this.v2.equals(v2))) {
@@ -104,28 +104,12 @@ class Edge {
     /**
      * Update edge length from vertex length factors.
      */
-    public void update() {
-        logLength = origLogLength + v1.getU() + v2.getU();
+    void update() {
+        logLength = origLogLength + v1.u + v2.u;
         assert !Double.isInfinite(logLength): "logLength is infinite";
         assert !Double.isNaN(logLength): "logLength is NaN";
         length = Math.exp(logLength/2);
         assert length > 0: "length must stay positive (" + logLength + ")";
-    }
-
-    /**
-     * Return twice the logarithm of the current length.
-     * @return twice the logarithm of the current length.
-     */
-    public double logLength() {
-        return logLength;
-    }
-
-    /**
-     * Return current length.
-     * @return current length
-     */
-    public double length() {
-        return length;
     }
 
     /**
@@ -147,38 +131,6 @@ class Edge {
     }
 
     /**
-     * Return first vertex.
-     */
-    public Vertex getV1() {
-        return v1;
-    }
-
-    /**
-     * Return second vertex.
-     */
-    public Vertex getV2() {
-        return v2;
-    }
-
-    /**
-     * Get the angle of this edge.
-     * This is the angle between the x axis and this edge and is set
-     * during the layout phase.
-     */
-    public double getAngle() {
-        return angle;
-    }
-
-    /**
-     * Set the angle of this edge.
-     * This is the angle between the x axis and this edge and is set
-     * during the layout phase.
-     */
-    public void setAngle(double angle) {
-        this.angle = angle;
-    }
-
-    /**
      * Set the angle of this edge unless it was already set.
      * This is the angle between the x axis and this edge and is set
      * during the layout phase.
@@ -193,7 +145,7 @@ class Edge {
      * vertex representations in the original input mesh.
      */
     @Override public String toString() {
-        return v1.getRep().toString() + "--" + v2.getRep().toString();
+        return v1.rep.toString() + "--" + v2.rep.toString();
     }
 
 }

@@ -59,7 +59,7 @@ class Triangle implements CorneredTriangle<Vertex> {
      */
     public Vertex getCorner(int i) {
         // return vs.get(i);
-        return as.get(i).vertex();
+        return as.get(i).vertex;
     }
 
     /**
@@ -143,8 +143,8 @@ class Triangle implements CorneredTriangle<Vertex> {
      */
     public Vertex getOppositeVertex(Edge e) {
         for (Angle a: as)
-            if (a.oppositeEdge() == e)
-                return a.vertex();
+            if (a.oppositeEdge == e)
+                return a.vertex;
         throw new IllegalArgumentException("given edge not part of triangle");
     }
 
@@ -160,7 +160,7 @@ class Triangle implements CorneredTriangle<Vertex> {
      */
     public Angle getNextAngle(Vertex v) {
         for (Angle a: as)
-            if (a.prevVertex() == v)
+            if (a.prevVertex == v)
                 return a;
         throw new IllegalArgumentException("given vertex not part of triangle");
     }
@@ -177,7 +177,7 @@ class Triangle implements CorneredTriangle<Vertex> {
      */
     public Angle getPrevAngle(Vertex v) {
         for (Angle a: as)
-            if (a.nextVertex() == v)
+            if (a.nextVertex == v)
                 return a;
         throw new IllegalArgumentException("given vertex not part of triangle");
     }
@@ -194,7 +194,7 @@ class Triangle implements CorneredTriangle<Vertex> {
          * @return the edge opposite that angle
          */
         public Edge get(int index) {
-            return as.get(index).oppositeEdge();
+            return as.get(index).oppositeEdge;
         }
 
         /**
@@ -220,7 +220,7 @@ class Triangle implements CorneredTriangle<Vertex> {
          * @return the vertex at the center of that angle
          */
         public Vertex get(int index) {
-            return as.get(index).vertex();
+            return as.get(index).vertex;
         }
 
         /**
@@ -240,9 +240,9 @@ class Triangle implements CorneredTriangle<Vertex> {
      */
     @Override public String toString() {
         StringBuilder buf = new StringBuilder("Triangle(");
-        buf.append(as.get(0).vertex().getRep().toString()).append(", ");
-        buf.append(as.get(1).vertex().getRep().toString()).append(", ");
-        buf.append(as.get(2).vertex().getRep().toString()).append(")");
+        buf.append(as.get(0).vertex.rep.toString()).append(", ");
+        buf.append(as.get(1).vertex.rep.toString()).append(", ");
+        buf.append(as.get(2).vertex.rep.toString()).append(")");
         return buf.toString();
     }
 

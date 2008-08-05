@@ -129,27 +129,27 @@ class InternalMesh<V> implements LocatedMesh<Vertex> {
         }
 
         for (Edge e: es) {
-            Vertex v1 = e.getV1(), v2 = e.getV2();
-            Vertex.Kind k1 = v1.getKind(), k2 = v2.getKind();
+            Vertex v1 = e.v1, v2 = e.v2;
+            Vertex.Kind k1 = v1.kind, k2 = v2.kind;
             if (e.isBoundary()) {
                 if (k1 == null)
-                    v1.setKind(Vertex.Kind.CORNER);
+                    v1.kind = Vertex.Kind.CORNER;
                 if (k1 == Vertex.Kind.INTERIOR)
-                    v1.setKind(Vertex.Kind.BOUNDARY);
+                    v1.kind = Vertex.Kind.BOUNDARY;
                 if (k2 == null)
-                    v2.setKind(Vertex.Kind.CORNER);
+                    v2.kind = Vertex.Kind.CORNER;
                 if (k2 == Vertex.Kind.INTERIOR)
-                    v2.setKind(Vertex.Kind.BOUNDARY);
+                    v2.kind = Vertex.Kind.BOUNDARY;
             }
             else {
                 if (k1 == null)
-                    v1.setKind(Vertex.Kind.INTERIOR);
+                    v1.kind = Vertex.Kind.INTERIOR;
                 if (k1 == Vertex.Kind.CORNER)
-                    v1.setKind(Vertex.Kind.BOUNDARY);
+                    v1.kind = Vertex.Kind.BOUNDARY;
                 if (k2 == null)
-                    v2.setKind(Vertex.Kind.INTERIOR);
+                    v2.kind = Vertex.Kind.INTERIOR;
                 if (k2 == Vertex.Kind.CORNER)
-                    v2.setKind(Vertex.Kind.BOUNDARY);
+                    v2.kind = Vertex.Kind.BOUNDARY;
             }
         }
     }
@@ -228,7 +228,7 @@ class InternalMesh<V> implements LocatedMesh<Vertex> {
      *         to one another
      */
     public double edgeLength(Vertex v1, Vertex v2) {
-        return getEdge(v1, v2).length();
+        return getEdge(v1, v2).length;
     }
 
     /**

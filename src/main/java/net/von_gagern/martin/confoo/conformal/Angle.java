@@ -17,43 +17,43 @@ class Angle {
     /**
      * The vertex A. This is the vertex at the center of the angle.
      */
-    private final Vertex vertex;
+    final Vertex vertex;
 
     /**
      * The vertex B. This is the vertex following the center of the
      * angle in the cyclic traversal order of the triangle.
      */
-    private final Vertex nextVertex;
+    final Vertex nextVertex;
 
     /**
      * The vertex C. This is the vertex preceding the center of the
      * angle in the cyclic traversal order of the triangle.
      */
-    private final Vertex prevVertex;
+    final Vertex prevVertex;
 
     /**
      * The edge BC. This is the edge opposite to the angle.
      */
-    private final Edge oppositeEdge;
+    final Edge oppositeEdge;
 
     /**
      * The edge AB. This is the edge between the center of the angle
      * and the vertex following that center in the cyclic traversal
      * order of the triangle.
      */
-    private final Edge nextEdge;
+    final Edge nextEdge;
 
     /**
      * The edge CA. This is the edge between the center of the angle
      * and the vertex preceding that center in the cyclic traversal
      * order of the triangle.
      */
-    private final Edge prevEdge;
+    final Edge prevEdge;
 
     /**
      * The angle, measured in radians.
      */
-    private double angle;
+    double angle;
 
     /**
      * Construct an angle.
@@ -67,8 +67,8 @@ class Angle {
      * @param prevEdge the edge CA
      * @param nextEdge the edge AB
      */
-    public Angle(Vertex vertex, Vertex nextVertex, Vertex prevVertex,
-                 Edge oppositeEdge, Edge prevEdge, Edge nextEdge) {
+    Angle(Vertex vertex, Vertex nextVertex, Vertex prevVertex,
+          Edge oppositeEdge, Edge prevEdge, Edge nextEdge) {
         this.vertex = vertex;
         this.nextVertex = nextVertex;
         this.prevVertex = prevVertex;
@@ -81,10 +81,10 @@ class Angle {
     /**
      * Update angle value from edge lengths.
      */
-    public void update() {
-        double lo = oppositeEdge.length();
-        double ln = nextEdge.length();
-        double lp = prevEdge.length();
+    void update() {
+        double lo = oppositeEdge.length;
+        double ln = nextEdge.length;
+        double lp = prevEdge.length;
 
         // handle violations of triangle inequality
         if (lo >= ln + lp) {
@@ -105,61 +105,6 @@ class Angle {
             angle = Math.PI - 2.*Math.atan(Math.sqrt(denom/nom));
         assert !Double.isInfinite(angle): "angle is infinite";
         assert !Double.isNaN(angle): "angle is NaN";
-    }
-
-    /**
-     * Get vertex A. This is the vertex at the center of the angle.
-     */
-    public Vertex vertex() {
-        return vertex;
-    }
-
-    /**
-     * Get vertex B. This is the vertex following the center of the
-     * angle in the cyclic traversal order of the triangle.
-     */
-    public Vertex nextVertex() {
-        return nextVertex;
-    }
-
-    /**
-     * Get vertex C. This is the vertex preceding the center of the
-     * angle in the cyclic traversal order of the triangle.
-     */
-    public Vertex prevVertex() {
-        return prevVertex;
-    }
-
-    /**
-     * Get edge AB. This is the edge between the center of the angle
-     * and the vertex following that center in the cyclic traversal
-     * order of the triangle.
-     */
-    public Edge nextEdge() {
-        return nextEdge;
-    }
-
-    /**
-     * Get edge CA. This is the edge between the center of the angle
-     * and the vertex preceding that center in the cyclic traversal
-     * order of the triangle.
-     */
-    public Edge prevEdge() {
-        return prevEdge;
-    }
-
-    /**
-     * Get edge BC. This is the edge opposite to the angle.
-     */
-    public Edge oppositeEdge() {
-        return oppositeEdge;
-    }
-
-    /**
-     * Get the angle, measured in radians.
-     */
-    public double angle() {
-        return angle;
     }
 
 }

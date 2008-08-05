@@ -83,16 +83,16 @@ class Energy implements Functional {
 
         int index = 0;
         for (Vertex v: vertices) {
-            if (v.isFixed()) v.setIndex(-1);
-            else v.setIndex(index++);
+            if (v.fixed) v.index = -1;
+            else v.index = index++;
         }
         if (logger.isDebugEnabled()) {
             for (java.util.Map.Entry<?, Vertex> entry:
                  mesh.getVertexMap().entrySet()) {
                 Vertex v = entry.getValue();
-                logger.debug(entry.getKey() + " -> " + v.getIndex() +
-                             " ( " + v.getKind() + ", " +
-                             v.getTarget()*(180./Math.PI) + ")");
+                logger.debug(entry.getKey() + " -> " + v.index +
+                             " ( " + v.kind + ", " +
+                             v.target*(180./Math.PI) + ")");
             }
         }
         size = index;
@@ -113,9 +113,9 @@ class Energy implements Functional {
      */
     public void setArgument(Vector u) {
         for (Vertex v: vertices) {
-            int i = v.getIndex();
+            int i = v.index;
             if (i >= 0)
-                v.setU(u.get(i));
+                v.u = u.get(i);
         }
         for (Edge e: edges) {
             e.update();
@@ -165,14 +165,14 @@ class Energy implements Functional {
         if (g == null) g = new DenseVector(getInputDimension());
         else g.zero();
         for (Vertex v: vertices) {
-            int i = v.getIndex();
+            int i = v.index;
             if (i >= 0)
-                g.add(i, v.getTarget());
+                g.add(i, v.target);
         }
         for (Angle a: angles) {
-            int i = a.vertex().getIndex();
+            int i = a.vertex.index;
             if (i >= 0)
-                g.add(i, -a.angle());
+                g.add(i, -a.angle);
         }
         return g;
     }
@@ -187,11 +187,11 @@ class Energy implements Functional {
         if (h == null) h = new LowerSPDPackMatrix(getInputDimension());
         else h.zero();
         for (Angle a: angles) {
-            double alpha = a.angle();
+            double alpha = a.angle;
             double cot = Math.cos(alpha)/Math.sin(alpha);
             double cot2 = cot/2;
-            int i = a.nextVertex().getIndex();
-            int j = a.prevVertex().getIndex();
+            int i = a.nextVertex.index;
+            int j = a.prevVertex.index;
             if (i >= 0)
                 h.add(i, i, cot2);
             if (j >= 0) {
@@ -216,17 +216,17 @@ class Energy implements Functional {
         double[] terms = new double[angles.size() + vertices.size()];
         int nterms = 0;
         for (Angle a: angles) {
-            double alpha = a.angle();
-            double lamda = a.oppositeEdge().logLength();
+            double alpha = a.angle;
+            double lamda = a.oppositeEdge.logLength;
             double cl2 = Clausen.cl2(2*alpha);
-            double u = a.vertex().getU();
+            double u = a.vertex.u;
             double term = alpha*lamda + cl2 - Math.PI*u;
             assert !Double.isInfinite(term): "infinite term in value";
             assert !Double.isNaN(term): "NaN term in value";
             terms[nterms++] = term;
         }
         for (Vertex v: vertices) {
-            double term = v.getTarget()*v.getU();
+            double term = v.target*v.u;
             assert !Double.isInfinite(term): "infinite term in value";
             assert !Double.isNaN(term): "NaN term in value";
             terms[nterms++] = term;

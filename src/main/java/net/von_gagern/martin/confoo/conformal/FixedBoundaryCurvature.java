@@ -35,27 +35,27 @@ class FixedBoundaryCurvature<C> extends BoundaryCondition<C> {
     public void setTargets(InternalMesh<C> mesh) {
         // initialize target angles
         for (Vertex v: mesh.getVertices()) {
-            switch (v.getKind()) {
+            switch (v.kind) {
             case CORNER:
-                v.setTarget(Math.PI/2.);
+                v.target = Math.PI/2.;
                 break;
             case BOUNDARY:
-                v.setTarget(Math.PI);
+                v.target = Math.PI;
                 break;
             case INTERIOR:
-                v.setTarget(2*Math.PI);
+                v.target = 2*Math.PI;
                 break;
             }
         }
 
         // honour explicitely set angles
         for (Map.Entry<? extends C, Double> entry: angles.entrySet()) {
-            vm.get(entry.getKey()).setTarget(entry.getValue());
+            vm.get(entry.getKey()).target = entry.getValue();
         }
 
         // fix a single arbitrary vertex to fix scale:
         List<Vertex> vs = mesh.getVertices();
-        vs.get(vs.size()/2).setFixed(true);
+        vs.get(vs.size()/2).fixed = true;
     }
 
 }

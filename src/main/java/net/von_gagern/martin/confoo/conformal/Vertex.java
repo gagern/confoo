@@ -13,96 +13,36 @@ class Vertex {
     /**
      * The vertex representant from the original input mesh.
      */
-    private Object rep;
+    Object rep;
 
     /**
      * Construct new internal vertex.
      * @param rep the vertex representant from the original input mesh
      */
-    public Vertex(Object rep) {
+    Vertex(Object rep) {
         this.rep = rep;
     }
-
-    /**
-     * Get vertex representant from the original input mesh.
-     * @return the vertex representant from the original input mesh
-     */
-    public Object getRep() {
-        return rep;
-    }
-
 
     /**
      * The vertex index.
      * This is used by the Energy function. Fixed vertices will have
      * an index of -1.
      */
-    private int index = -1;
-
-    /**
-     * Get vertex index.
-     * @return the index assigned to the vertex
-     */
-    public int getIndex() {
-        return index;
-    }
-
-    /**
-     * Set vertex index.
-     * @param index the index to be assigned to the vertex
-     */
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
+    int index = -1;
 
     /**
      * Target angle sum.
      * The transformation will result in a mesh where the sum over all
      * angles incident to this vertex equals this value.
      */
-    private double target = 2*Math.PI;
-
-    /**
-     * Get target angle sum.
-     * @return the target angle sum
-     */
-    public double getTarget() {
-        return target;
-    }
-
-    /**
-     * Set target angle sum.
-     * @param target the new target angle sum
-     */
-    public void setTarget(double target) {
-        this.target = target;
-    }
-
+    double target = 2*Math.PI;
 
     /**
      * Scale parameter.
      * This length of edges incident to this vertex will be multiplied
      * by exp(u/2).
      */
-    private double u = 0;
-
-    /**
-     * Get scale parameter.
-     * @return the current scale parameter
-     */
-    public double getU() {
-        return u;
-    }
-
-    /**
-     * Set scale parameter
-     * @param u the new scale parameter
-     */
-    public void setU(double u) {
-        this.u = u;
-    }
-
+    double u = 0;
 
     /**
      * Fixed scale vertex flag.
@@ -110,24 +50,7 @@ class Vertex {
      * lengths of its surrounding edges. Its parameter u will remain
      * fixed.
      */
-    private boolean fixed = false;
-
-    /**
-     * Get fixed vertex flag.
-     * @return the current state of the fixed vertex flag
-     */
-    public boolean isFixed() {
-        return fixed;
-    }
-
-    /**
-     * Set fixed vertex flag.
-     * @param fixed the new state of the fixed vertex flag
-     */
-    public void setFixed(boolean fixed) {
-        this.fixed = fixed;
-    }
-
+    boolean fixed = false;
 
     /**
      * Enumeration of vertex kinds regarding.
@@ -156,34 +79,17 @@ class Vertex {
     /**
      * Vertex kind regarding boundary classification.
      */
-    private Kind kind = null;
-
-    /**
-     * Get vertex kind regarding boundary classification.
-     * @return the vertex kind
-     */
-    public Kind getKind() {
-        return kind;
-    }
-
-    /**
-     * Set vertex kind regarding boundary classification.
-     * @param kind the vertex kind
-     */
-    public void setKind(Kind kind) {
-        this.kind = kind;
-    }
-
+    Kind kind = null;
 
     /**
      * Vertex location. Set during layout.
      */
-    private Point2D location;
+    Point2D location;
 
     /**
      * Determine whether the vertex has a location assigned to it.
      */
-    public boolean hasLocation() {
+    boolean hasLocation() {
         return location != null;
     }
 
@@ -191,7 +97,7 @@ class Vertex {
      * Get x coordinate of vertex.
      * @return the x coordinate of this vertex
      */
-    public double getX() {
+    double getX() {
         return location.getX();
     }
 
@@ -199,17 +105,8 @@ class Vertex {
      * Get y coordinate of vertex.
      * @return the y coordinate of this vertex
      */
-    public double getY() {
+    double getY() {
         return location.getY();
-    }
-
-    /**
-     * Set location of this vertex.
-     * @param x the x coordinate of this vertex
-     * @param y the y coordinate of this vertex
-     */
-    public void setLocation(double x, double y) {
-        location = new Point2D.Double(x, y);
     }
 
     /**
@@ -217,11 +114,10 @@ class Vertex {
      * @param x the x coordinate of this vertex
      * @param y the y coordinate of this vertex
      */
-    public void offerLocation(double x, double y) {
+    void offerLocation(double x, double y) {
         if (location == null)
             location = new Point2D.Double(x, y);
     }
-
 
     /**
      * String representation of this vertex.

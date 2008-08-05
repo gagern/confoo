@@ -68,11 +68,11 @@ abstract class AbstractTestCase {
 
     protected void checkEdgeLengths(InternalMesh<?> mesh) {
         for (Edge e: mesh.getEdges()) {
-            double dx = mesh.getX(e.getV1()) - mesh.getX(e.getV2());
-            double dy = mesh.getY(e.getV1()) - mesh.getY(e.getV2());
-            double dz = mesh.getZ(e.getV1()) - mesh.getZ(e.getV2());
+            double dx = mesh.getX(e.v1) - mesh.getX(e.v2);
+            double dy = mesh.getY(e.v1) - mesh.getY(e.v2);
+            double dz = mesh.getZ(e.v1) - mesh.getZ(e.v2);
             double len = Math.sqrt(dx*dx + dy*dy + dz*dz);
-            assertEquals(e.length(), len, lengthTolerance);
+            assertEquals(e.length, len, lengthTolerance);
         }
     }
 }

@@ -35,7 +35,7 @@ public class TestInternalMesh extends AbstractTestCase {
         InternalMesh<Integer> mesh = new InternalMesh<Integer>(obj);
         Map<Integer, Vertex> vm = mesh.getVertexMap();
         for (int i = 1; i <= 9; ++i) {
-            Vertex.Kind kind = vm.get(i).getKind();
+            Vertex.Kind kind = vm.get(i).kind;
             switch (i) {
             case 1:
             case 3:

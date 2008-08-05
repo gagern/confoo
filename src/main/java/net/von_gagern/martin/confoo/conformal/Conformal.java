@@ -172,17 +172,17 @@ public class Conformal<V> implements Callable<LocatedMesh<V>> {
         List<Vertex> vs = mesh.getVertices();
         double sum = 0;
         for (Vertex v: vs)
-            sum += v.getU();
+            sum += v.u;
         double diff = -sum/vs.size();
         for (Vertex v: vs)
-            v.setU(v.getU() + diff);
+            v.u += diff;
         for (Edge e: mesh.getEdges())
             e.update();
         for (Angle a: mesh.getAngles())
             a.update();
         if (logger.isTraceEnabled())
             for (Edge e: mesh.getEdges())
-                logger.trace("Edge length " + e + ": " + e.length());
+                logger.trace("Edge length " + e + ": " + e.length);
     }
 
     /**
@@ -193,11 +193,11 @@ public class Conformal<V> implements Callable<LocatedMesh<V>> {
         logger.debug("Checking triangle inequalities");
         for (Triangle t: mesh.getTriangles()) {
             for (Angle a: t.getAngles()) {
-                if (a.oppositeEdge().length() >
-                    a.prevEdge().length() + a.nextEdge().length()) {
-                    Object o1 = a.vertex().getRep();
-                    Object o2 = a.nextVertex().getRep();
-                    Object o3 = a.prevVertex().getRep();
+                if (a.oppositeEdge.length >
+                    a.prevEdge.length + a.nextEdge.length) {
+                    Object o1 = a.vertex.rep;
+                    Object o2 = a.nextVertex.rep;
+                    Object o3 = a.prevVertex.rep;
                     throw new TriangleInequalityException(o1, o2, o3);
                 }
             }

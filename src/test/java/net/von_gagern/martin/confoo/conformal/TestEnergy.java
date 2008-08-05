@@ -28,13 +28,13 @@ public class TestEnergy extends AbstractTestCase {
     {
         ObjFormat obj = objResource("oneRightIsosceles.obj");
         InternalMesh<Integer> mesh = new InternalMesh<Integer>(obj);
-        for (Vertex v: mesh.getVertices()) v.setTarget(60*DEG);
-        mesh.getVertexMap().get(2).setFixed(true);
+        for (Vertex v: mesh.getVertices()) v.target = 60*DEG;
+        mesh.getVertexMap().get(2).fixed = true;
         return mesh;
     }
 
     private int getId(Vertex v, InternalMesh<Integer> mesh) {
-        return (Integer)v.getRep();
+        return (Integer)v.rep;
     }
 
     @Test public void testOneRightIsoscelesAngles()
@@ -46,16 +46,16 @@ public class TestEnergy extends AbstractTestCase {
         int seenAngle = 0;
         double[] angles = { 90, 45, 45 };
         for (Angle a: mesh.getAngles()) {
-            Vertex v = a.vertex();
+            Vertex v = a.vertex;
             int id = getId(v, mesh) - 1;
             seenAngle |= (1 << id);
-            if (Math.abs(angles[id] - a.angle()/DEG) > angleTolerance) {
+            if (Math.abs(angles[id] - a.angle/DEG) > angleTolerance) {
                 logger.debug("Wrong angle " + id);
-                logger.debug("nextEdge: " + a.nextEdge().length());
-                logger.debug("prevEdge: " + a.prevEdge().length());
-                logger.debug("oppositeEdge: " + a.oppositeEdge().length());
+                logger.debug("nextEdge: " + a.nextEdge.length);
+                logger.debug("prevEdge: " + a.prevEdge.length);
+                logger.debug("oppositeEdge: " + a.oppositeEdge.length);
             }
-            assertEquals("Angle " + id, angles[id], a.angle()/DEG,
+            assertEquals("Angle " + id, angles[id], a.angle/DEG,
                          angleTolerance);
         }
         assertEquals(7, seenAngle);
@@ -70,9 +70,9 @@ public class TestEnergy extends AbstractTestCase {
         e.setArgument(new DenseVector(2));
         Vector g = e.gradient(null);
         assertEquals(2, g.size());
-        assertEquals(60. - 90., g.get(vm.get(1).getIndex())/DEG,
+        assertEquals(60. - 90., g.get(vm.get(1).index)/DEG,
                      angleTolerance);
-        assertEquals(60. - 45., g.get(vm.get(3).getIndex())/DEG,
+        assertEquals(60. - 45., g.get(vm.get(3).index)/DEG,
                      angleTolerance);
     }
 
