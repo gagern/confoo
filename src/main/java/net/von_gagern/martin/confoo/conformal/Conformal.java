@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
  * </pre>
  *
  * @param <V> the class used to represent vertices of the mesh
- * @see <a href="http://www.multires.caltech.edu/pubs/ConfEquiv.pdf">Conformal Equivalence of Triangle Meshes by Springborn, Schröder and Pinkall</a>
+ * @see <a href="http://dx.doi.org/10.1145/1399504.1360676">Conformal Equivalence of Triangle Meshes by Springborn, Schröder and Pinkall</a>
  *
  * @author <a href="mailto:Martin.vGagern@gmx.net">Martin von Gagern</a>
  * @since 1.0
