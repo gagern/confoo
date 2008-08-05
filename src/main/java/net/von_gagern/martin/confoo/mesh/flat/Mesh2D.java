@@ -1,4 +1,4 @@
-package net.von_gagern.martin.confoo.mesh;
+package net.von_gagern.martin.confoo.mesh.flat;
 
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.von_gagern.martin.confoo.mesh.CorneredTriangle;
+import net.von_gagern.martin.confoo.mesh.LocatedMesh;
 
 /**
  * A 2D triangle mesh.<p>

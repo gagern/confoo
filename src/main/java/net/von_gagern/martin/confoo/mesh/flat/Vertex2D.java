@@ -1,4 +1,4 @@
-package net.von_gagern.martin.confoo.mesh;
+package net.von_gagern.martin.confoo.mesh.flat;
 
 import java.awt.geom.Point2D;
 

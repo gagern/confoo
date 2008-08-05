@@ -1,4 +1,4 @@
-package net.von_gagern.martin.confoo.mesh;
+package net.von_gagern.martin.confoo.mesh.flat;
 
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -7,6 +7,7 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.NoSuchElementException;
+import net.von_gagern.martin.confoo.mesh.SimpleTriangle;
 
 /**
  * A 2D triangle which is also a shape.
