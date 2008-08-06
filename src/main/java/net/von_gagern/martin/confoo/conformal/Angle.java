@@ -78,33 +78,4 @@ class Angle {
         this.angle = Double.NaN;
     }
 
-    /**
-     * Update angle value from edge lengths.
-     */
-    void update() {
-        double lo = oppositeEdge.length;
-        double ln = nextEdge.length;
-        double lp = prevEdge.length;
-
-        // handle violations of triangle inequality
-        if (lo >= ln + lp) {
-            angle = Math.PI;
-            return;
-        }
-        if (ln >= lo + lp || lp >= lo + ln) {
-            angle = 0;
-            return;
-        }
-
-        // calculate angle using half-angle formula
-        double nom = (ln + lo - lp)*(lo + lp - ln);
-        double denom = (lp + ln - lo)*(lo + lp + ln);
-        if (nom <= denom)
-            angle = 2.*Math.atan(Math.sqrt(nom/denom));
-        else
-            angle = Math.PI - 2.*Math.atan(Math.sqrt(denom/nom));
-        assert !Double.isInfinite(angle): "angle is infinite";
-        assert !Double.isNaN(angle): "angle is NaN";
-    }
-
 }

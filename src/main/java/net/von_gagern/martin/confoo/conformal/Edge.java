@@ -102,17 +102,6 @@ class Edge {
     }
 
     /**
-     * Update edge length from vertex length factors.
-     */
-    void update() {
-        logLength = origLogLength + v1.u + v2.u;
-        assert !Double.isInfinite(logLength): "logLength is infinite";
-        assert !Double.isNaN(logLength): "logLength is NaN";
-        length = Math.exp(logLength/2);
-        assert length > 0: "length must stay positive (" + logLength + ")";
-    }
-
-    /**
      * Return the other incident triangle besides the given one.
      * @param t the incident triangle not to be returned
      * @return the incident triangle different from <code>t</code>

@@ -158,7 +158,6 @@ public class Conformal<V> implements Callable<LocatedMesh<V>> {
     {
         boundary();
         lengths();
-        scale();
         triangleInequalities();
         layout();
         return new ResultMesh<V>(mesh);
@@ -195,29 +194,8 @@ public class Conformal<V> implements Callable<LocatedMesh<V>> {
             throw new MeshException("Could not find optimal solution: " +
                                     e.getReason(), e);
         }
-    }
-
-    /**
-     * Scale solution.
-     * Some boundary conditions lead to an arbitrarily scaled
-     * solution. A nicer solution would be one that gives zero as the
-     * sum over all <i>u</i>, i.e. all logarithmic length
-     * changes. This postprocessing step achieves the correct scale.
-     */
-    private void scale() {
-        if (boundaryCondition.fixedScale()) return;
-        logger.debug("Scaling result");
-        List<Vertex> vs = mesh.getVertices();
-        double sum = 0;
-        for (Vertex v: vs)
-            sum += v.u;
-        double diff = -sum/vs.size();
-        for (Vertex v: vs)
-            v.u += diff;
-        for (Edge e: mesh.getEdges())
-            e.update();
-        for (Angle a: mesh.getAngles())
-            a.update();
+        if (!boundaryCondition.fixedScale())
+            energy.scale();
         if (logger.isTraceEnabled())
             for (Edge e: mesh.getEdges())
                 logger.trace("Edge length " + e + ": " + e.length);

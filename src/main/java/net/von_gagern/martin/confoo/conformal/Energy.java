@@ -118,10 +118,10 @@ class Energy implements Functional {
                 v.u = u.get(i);
         }
         for (Edge e: edges) {
-            e.update();
+            update(e);
         }
         for (Angle a: angles) {
-            a.update();
+            update(a);
         }
     }
 
@@ -203,6 +203,69 @@ class Energy implements Functional {
             }
         }
         return h;
+    }
+
+    /**
+     * Scale solution.
+     * Some boundary conditions lead to an arbitrarily scaled
+     * solution. A nicer solution would be one that gives zero as the
+     * sum over all <i>u</i>, i.e. all logarithmic length
+     * changes. This postprocessing step achieves the correct scale.
+     */
+    public void scale() {
+        logger.debug("Scaling result");
+        double sum = 0;
+        for (Vertex v: vertices)
+            sum += v.u;
+        double diff = -sum/vertices.size();
+        for (Vertex v: vertices)
+            v.u += diff;
+        for (Edge e: edges)
+            update(e);
+        for (Angle a: angles)
+            update(a);
+    }
+
+    /**
+     * Update edge length from vertex length factors.
+     * @param e the edge to be updated
+     */
+    protected void update(Edge e) {
+        e.logLength = e.origLogLength + e.v1.u + e.v2.u;
+        assert !Double.isInfinite(e.logLength): "logLength is infinite";
+        assert !Double.isNaN(e.logLength): "logLength is NaN";
+        e.length = Math.exp(e.logLength/2);
+        assert e.length > 0: "length must stay positive (" + e.logLength + ")";
+    }
+
+    /**
+     * Update angle value from edge lengths.
+     * @param a the angle to be updated
+     */
+    protected void update(Angle a) {
+        double lo = a.oppositeEdge.length;
+        double ln = a.nextEdge.length;
+        double lp = a.prevEdge.length;
+
+        // handle violations of triangle inequality
+        if (lo >= ln + lp) {
+            a.angle = Math.PI;
+            return;
+        }
+        if (ln >= lo + lp || lp >= lo + ln) {
+            a.angle = 0;
+            return;
+        }
+
+        // calculate angle using half-angle formula
+        double nom = (ln + lo - lp)*(lo + lp - ln);
+        double denom = (lp + ln - lo)*(lo + lp + ln);
+        if (nom <= denom)
+            a.angle = 2.*Math.atan(Math.sqrt(nom/denom));
+        else
+            a.angle = Math.PI - 2.*Math.atan(Math.sqrt(denom/nom));
+        assert !Double.isInfinite(a.angle): "angle is infinite";
+        assert !Double.isNaN(a.angle): "angle is NaN";
     }
 
     /**
