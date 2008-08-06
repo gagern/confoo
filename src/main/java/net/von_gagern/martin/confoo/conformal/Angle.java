@@ -51,6 +51,12 @@ class Angle {
     final Edge prevEdge;
 
     /**
+     * The angle CBA. This is the vertex centered at the next vertex
+     * in the cyclic traversal order of the triangle.
+     */
+    Angle nextAngle;
+
+    /**
      * The angle, measured in radians.
      */
     double angle;

@@ -40,17 +40,22 @@ class Energy implements Functional {
     /**
      * Collection of all mesh vertices.
      */
-    private final Collection<Vertex> vertices;
+    protected final Collection<Vertex> vertices;
 
     /**
      * Collection of all mesh edges.
      */
-    private final Collection<Edge> edges;
+    protected final Collection<Edge> edges;
 
     /**
      * Collection of all mesh angles.
      */
-    private final Collection<Angle> angles;
+    protected final Collection<Angle> angles;
+
+    /**
+     * Collection of all mesh triangles.
+     */
+    protected final Collection<Triangle> triangles;
 
     /**
      * Input dimension of energy function, equal to number of unfixed vertices.
@@ -80,6 +85,7 @@ class Energy implements Functional {
         vertices = mesh.getVertices();
         edges = mesh.getEdges();
         angles = mesh.getAngles();
+        triangles = mesh.getTriangles();
 
         int index = 0;
         for (Vertex v: vertices) {
@@ -234,8 +240,12 @@ class Energy implements Functional {
         e.logLength = e.origLogLength + e.v1.u + e.v2.u;
         assert !Double.isInfinite(e.logLength): "logLength is infinite";
         assert !Double.isNaN(e.logLength): "logLength is NaN";
-        e.length = Math.exp(e.logLength/2);
+        e.length = lamdaToLength(e.logLength);
         assert e.length > 0: "length must stay positive (" + e.logLength + ")";
+    }
+
+    protected double lamdaToLength(double lamda) {
+        return Math.exp(lamda/2.);
     }
 
     /**
@@ -258,8 +268,10 @@ class Energy implements Functional {
         }
 
         // calculate angle using half-angle formula
-        double nom = (ln + lo - lp)*(lo + lp - ln);
-        double denom = (lp + ln - lo)*(lo + lp + ln);
+        double nom = lengthAngleFactor(ln + lo - lp);
+        nom *= lengthAngleFactor(lo + lp - ln);
+        double denom = lengthAngleFactor(lp + ln - lo);
+        denom *= lengthAngleFactor(lo + lp + ln);
         if (nom <= denom)
             a.angle = 2.*Math.atan(Math.sqrt(nom/denom));
         else
@@ -269,13 +281,23 @@ class Energy implements Functional {
     }
 
     /**
+     * Value representing an length in the half-angle formula.
+     * In euclidean geometry this is the passed value itself.
+     * @param the length to be handled
+     * @return the factor corresponding to that length
+     */
+    protected double lengthAngleFactor(double length) {
+        return length;
+    }
+
+    /**
      * Calculate individual terms whose sum make up the function
      * value. Clever handling of those terms allows for more precise
      * calculation of function values and especially differences of
      * such values.
      * @return terms whose sum make up the function value
      */
-    private double[] valueTerms() {
+    protected double[] valueTerms() {
         double[] terms = new double[angles.size() + vertices.size()];
         int nterms = 0;
         for (Angle a: angles) {
@@ -308,6 +330,9 @@ class Energy implements Functional {
      */
     private double preciseSum(double[] terms) {
         Arrays.sort(terms);
+        assert !Double.isInfinite(terms[0]);
+        assert !Double.isInfinite(terms[terms.length - 1]);
+        assert !Double.isNaN(terms[terms.length - 1]);
         double sum = 0;
         if (terms[0] >= 0) { // all non-negative
             for (int i = 0; i < terms.length; ++i)

@@ -123,6 +123,9 @@ class InternalMesh<V> implements LocatedMesh<Vertex> {
                 as.add(a);
                 tas[i] = a;
             }
+            for (int i = 0; i < 3; ++i) {
+                tas[i].nextAngle = tas[(i+1)%3];
+            }
             t.setAngles(tas[0], tas[1], tas[2]);
 
         }
