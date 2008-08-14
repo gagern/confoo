@@ -100,8 +100,10 @@ class HypEnergy extends Energy {
         else h.zero();
         for (Angle a: angles) {
             double alpha = a.angle;
+            double beta = (Math.PI + alpha - a.nextAngle.angle -
+                           a.nextAngle.nextAngle.angle)/2.;
             double l = a.oppositeEdge.length;
-            double cot = Math.cos(alpha)/Math.sin(alpha);
+            double cot = Math.cos(beta)/Math.sin(beta);
             double tanh = Math.tanh(l/2);
             double tanhSq = tanh*tanh;
             double diag = cot*(tanhSq + 1);
