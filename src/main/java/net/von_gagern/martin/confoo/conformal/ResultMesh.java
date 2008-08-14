@@ -1,6 +1,5 @@
 package net.von_gagern.martin.confoo.conformal;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import net.von_gagern.martin.confoo.mesh.AbstractMeshIterator;

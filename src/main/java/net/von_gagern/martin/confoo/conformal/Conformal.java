@@ -1,6 +1,5 @@
 package net.von_gagern.martin.confoo.conformal;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import net.von_gagern.martin.confoo.mesh.LocatedMesh;

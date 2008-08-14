@@ -1,14 +1,8 @@
 package net.von_gagern.martin.confoo.conformal;
 
-import java.util.Arrays;
-import java.util.Collection;
-import no.uib.cipr.matrix.DenseVector;
 import no.uib.cipr.matrix.LowerSPDPackMatrix;
 import no.uib.cipr.matrix.Matrix;
-import no.uib.cipr.matrix.Vector;
 import net.von_gagern.martin.confoo.fun.Clausen;
-import net.von_gagern.martin.confoo.opt.Functional;
-import net.von_gagern.martin.confoo.opt.Newton;
 import org.apache.log4j.Logger;
 
 /**

@@ -1,7 +1,6 @@
 package net.von_gagern.martin.confoo.conformal;
 
 import java.util.Iterator;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.List;

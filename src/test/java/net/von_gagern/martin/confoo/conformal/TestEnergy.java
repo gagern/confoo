@@ -2,7 +2,6 @@ package net.von_gagern.martin.confoo.conformal;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import no.uib.cipr.matrix.DenseVector;
 import no.uib.cipr.matrix.Vector;
 import org.apache.log4j.Logger;
