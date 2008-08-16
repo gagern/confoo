@@ -94,6 +94,7 @@ class HypEnergy extends Energy {
         else h.zero();
         for (Angle a: angles) {
             double alpha = a.angle;
+            if (alpha <= 0 || alpha >= Math.PI) continue;
             double beta = (Math.PI + alpha - a.nextAngle.angle -
                            a.nextAngle.nextAngle.angle)/2.;
             double l = a.oppositeEdge.length;
