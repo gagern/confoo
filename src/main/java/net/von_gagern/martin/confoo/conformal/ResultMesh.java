@@ -9,14 +9,22 @@ import net.von_gagern.martin.confoo.mesh.MeshIterator;
 import net.von_gagern.martin.confoo.mesh.SimpleTriangle;
 
 /**
- * Representation of a transformed mesh.
- * This map represents the coordinates of an internal mesh but uses
- * the same objects as the original input mesh to identify vertices.
+ * Representation of a transformed mesh.<p>
+ *
+ * This map is returned as the result of a transformation. Its
+ * vertices are the same as those of the input mesh, bur its
+ * coordinates come from the transformed mesh.<p>
+ *
+ * This class has no public constructor, as it is only ever returned
+ * by methods of classes in this package.
+ *
+ * @param <V> the class used to represent vertices of the mesh
+ * @see Conformal#transform
  *
  * @author <a href="mailto:Martin.vGagern@gmx.net">Martin von Gagern</a>
- * @since 1.0
+ * @since 1.1
  */
-class ResultMesh<V> implements LocatedMesh<V> {
+public class ResultMesh<V> implements LocatedMesh<V> {
 
     /**
      * Internal mesh to be wrapped.
@@ -30,9 +38,13 @@ class ResultMesh<V> implements LocatedMesh<V> {
 
     /**
      * Construct new result mesh.
+     *
+     * The constructed object represents the coordinates of an
+     * internal mesh but uses the same objects as the original input
+     * mesh to identify vertices.
      * @param internal the internal mesh to wrap
      */
-    public ResultMesh(InternalMesh<V> internal) {
+    /* package private */ ResultMesh(InternalMesh<V> internal) {
         this.internal = internal;
         vm = internal.getVertexMap();
     }
@@ -62,6 +74,18 @@ class ResultMesh<V> implements LocatedMesh<V> {
      */
     public double getZ(V v) {
         return internal.getZ(vm.get(v));
+    }
+
+    /**
+     * Get the parameter u associated with this vertex.
+     *
+     * <i>e</i><sup><i>u</i>/2</sup> is the factor by which edges
+     * adjacent to a given vertex will be scaled.
+     * @param v a vertex of the mesh
+     * @return the parameter <i>u</i> associated with that vertex
+     */
+    public double getU(V v) {
+        return vm.get(v).u;
     }
 
     /**

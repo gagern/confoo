@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
  * @author <a href="mailto:Martin.vGagern@gmx.net">Martin von Gagern</a>
  * @since 1.0
  */
-public class Conformal<V> implements Callable<LocatedMesh<V>> {
+public class Conformal<V> implements Callable<ResultMesh<V>> {
 
     /*********************************************************************
      * Member variables
@@ -144,7 +144,11 @@ public class Conformal<V> implements Callable<LocatedMesh<V>> {
      *
      * This is the main method of the class. Before this is invoked,
      * you can tune the transformation process by setting various
-     * parameters.
+     * parameters.<p>
+     *
+     * The returned object is defined to be a <code>ResultMesh</code>
+     * only since version 1.1. Before that it was only specified to be
+     * a <code>LocatedMesh</code>.
      *
      * @return the transformed mesh
      * @throws IllegalStateException if no boundary condition was set
@@ -152,7 +156,7 @@ public class Conformal<V> implements Callable<LocatedMesh<V>> {
      * @throws TriangleInequalityException if the result would violate
      *         the triangle inequality
      */
-    public LocatedMesh<V> transform()
+    public ResultMesh<V> transform()
         throws MeshException, TriangleInequalityException
     {
         boundary();
@@ -265,14 +269,18 @@ public class Conformal<V> implements Callable<LocatedMesh<V>> {
      *
      * Any application not using multiple threads should rather call
      * <code>transform</code> directly to deal with exceptions more
-     * easily.
+     * easily.<p>
+     *
+     * The returned object is defined to be a <code>ResultMesh</code>
+     * only since version 1.1. Before that it was only specified to be
+     * a <code>LocatedMesh</code>.
      *
      * @throws IllegalStateException if there is an uncleared
      *         exception from a previous invocation
      * @see #transform()
      * @see #throwInterceptedExceptions()
      */
-    public LocatedMesh<V> call() {
+    public ResultMesh<V> call() {
         if (meshException != null)
             throw new IllegalStateException("Uncleared exceptions from " +
                                             "previous run");
