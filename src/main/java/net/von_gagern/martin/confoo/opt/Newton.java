@@ -99,7 +99,7 @@ public class Newton implements Runnable {
      * Parameter for backtracking line search.
      * This factor gives the proportion of the value change predicted
      * by the first order derivative that a line search value must be
-     * below in order for the search to terminate. 0 < alpha < 0.5.
+     * below in order for the search to terminate. 0 &lt; alpha &lt; 0.5.
      */
     private double alpha = 0.25;
 
@@ -107,7 +107,7 @@ public class Newton implements Runnable {
      * Backtracking line search step factor.
      * This factor determines the step size for backtracking line
      * search. The step size will be multiplied by this factor in each
-     * iteration. 0 < beta < 1.
+     * iteration. 0 &lt; beta &lt; 1.
      */
     private double beta = 0.75;
 
@@ -115,7 +115,7 @@ public class Newton implements Runnable {
      * Minimum backtracking line search step size factor.
      * This determines the minimum step size used during backtracking
      * line search, in units of the undamped newton step.
-     * 0 <= gamma <= beta.
+     * 0 &lt;= gamma &lt;= beta.
      */
     private double gamma = 0.01;
 
@@ -409,9 +409,9 @@ public class Newton implements Runnable {
      * matter what.
      *
      * @param alpha factor by which to multiply predicted change.
-     *              0 < alpha < 0.5
-     * @param beta factor to reduce step size. 0 < beta < 1
-     * @param gamma minimum step size factor. 0 <= gamma <= beta
+     *              0 &lt; alpha &lt; 0.5
+     * @param beta factor to reduce step size. 0 &lt; beta &lt; 1
+     * @param gamma minimum step size factor. 0 &lt;= gamma &lt;= beta
      */
     public void lineSearchParameters(double alpha, double beta, double gamma) {
         if (alpha <= 0 || alpha >= 0.5)

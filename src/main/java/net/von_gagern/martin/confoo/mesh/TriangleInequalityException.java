@@ -7,7 +7,7 @@ import java.util.List;
  * Violation of triangle inequality.<p>
  *
  * The triangle inequality states that for any three edges <i>a</i>,
- * <i>b</i> and <i>c</i> of a triangle, <i>a</i> <= <i>b</i> +
+ * <i>b</i> and <i>c</i> of a triangle, <i>a</i> &lt;= <i>b</i> +
  * <i>c</i> always holds.<p>
  *
  * Applications relying on the triangle inequality in a

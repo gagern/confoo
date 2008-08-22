@@ -43,7 +43,7 @@ class Triangle implements CorneredTriangle<Vertex> {
      * Get specified corner of the triangle.
      * @param i the index of the corner
      * @return the requested corner
-     * @throws IndexOutOfBoundsException unless 0 <= i < 3
+     * @throws IndexOutOfBoundsException unless 0 &lt;= i &lt; 3
      */
     public Vertex getCorner(int i) {
         return as.get(i).vertex;

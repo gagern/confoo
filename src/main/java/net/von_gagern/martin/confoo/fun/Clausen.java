@@ -53,8 +53,8 @@ public class Clausen {
 
     /**
      * The nunber of terms of the array ACLAUS to be used.
-     * The recommended value is such that ABS(ACLAUS(NTERMS)) < EPS/100
-     * subject to 1 <= NTERMS <= 15
+     * The recommended value is such that ABS(ACLAUS(NTERMS)) &lt; EPS/100
+     * subject to 1 &lt;= NTERMS &lt;= 15
      */
     private static int NTERMS = 13;
 
