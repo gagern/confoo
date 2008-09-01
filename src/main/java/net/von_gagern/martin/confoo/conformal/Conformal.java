@@ -252,12 +252,12 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
      ********************************************************************/
 
     /**
-     * Cached exception intercepted by <code>run</code>
+     * Cached exception intercepted by <code>call</code>
      */
     private MeshException meshException;
 
     /**
-     * Runnable interface to the <code>transform</code> method.<p>
+     * Callable interface to the <code>transform</code> method.<p>
      *
      * This method allows performing the transformation in a different
      * thread. However, as a <code>call</code> method may not throw
