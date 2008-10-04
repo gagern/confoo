@@ -151,7 +151,7 @@ class Layout implements Runnable {
          * We want to find the coordinates for C, based on those of A.
          * Thus we determine the Angle BAC and the edge [AC].
          * Each edge has an associated orientation, but we have to take
-         * care or the orientation of these edges. If both edges point
+         * care of the orientation of these edges. If both edges point
          * towards A or both away from A, we can simply add angles.
          * Otherwise we have to add PI in order to invert orientation.
          */
