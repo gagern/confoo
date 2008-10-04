@@ -128,12 +128,12 @@ class Layout implements Runnable {
                      v3.getX() + "," + v3.getY() + ")");
 
         // set angles
-        if (e12.v1 == v1) e12.angle = 0;
-        else e12.angle = Math.PI;
-        if (e13.v1 == v1) e13.angle = alpha;
-        else e13.angle = alpha - Math.PI;
-        if (e23.v1 == v2) e23.angle = Math.PI - beta;
-        else e23.angle = -beta;
+        if (e12.v1 == v1) e12.offerAngle(0);
+        else e12.offerAngle(Math.PI);
+        if (e13.v1 == v1) e13.offerAngle(alpha);
+        else e13.offerAngle(alpha - Math.PI);
+        if (e23.v1 == v2) e23.offerAngle(Math.PI - beta);
+        else e23.offerAngle(-beta);
     }
 
     /**
@@ -161,7 +161,7 @@ class Layout implements Runnable {
         Vertex a = bac.vertex, b = cba.vertex;
         Edge ca = bac.prevEdge, bc = cba.nextEdge;
         double alpha = bac.angle, beta = cba.angle;
-        double abAngle = e.angle;
+        double abAngle = e.getAngle();
 
         double caAngle = edgeAngle(abAngle + alpha, e, ca, a);
         double bcAngle = edgeAngle(abAngle - beta, e, bc, b);

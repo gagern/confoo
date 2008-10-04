@@ -55,11 +55,16 @@ class Edge {
     double length;
 
     /**
-     * The angle of this edge.
-     * This is the angle between the x axis and this edge and is set
-     * during the layout phase.
+     * The direction of this edge.
+     * This value is set during the layout phase.
+     * Its type depends on the underlying geometry.
+     * <dl>
+     * <dt>Euclidean:</dt><dd>The angle between the x axis and this edge</dd>
+     * <dt>Hyperbolic:</dt><dd>The transformation mapping the origin
+     * to v1 and the real axis to the line along this edge</dd>
+     * </dl>
      */
-    double angle = Double.NaN;
+    private Object direction;
 
     /**
      * Construct edge.
@@ -125,8 +130,17 @@ class Edge {
      * during the layout phase.
      */
     public void offerAngle(double angle) {
-        if (Double.isNaN(this.angle))
-            this.angle = angle;
+        if (direction == null)
+            direction = Double.valueOf(angle);
+    }
+
+    /**
+     * Get the angle of this edge.
+     * This is the angle between the x axis and this edge and is set
+     * during the layout phase.
+     */
+    public double getAngle() {
+        return ((Double)direction).doubleValue();
     }
 
     /**
