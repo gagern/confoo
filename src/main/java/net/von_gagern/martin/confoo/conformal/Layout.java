@@ -108,7 +108,7 @@ class Layout implements Runnable {
      * Layout the initial triangle.
      * @param t the first triangle to be layed out
      */
-    private void layoutStart(Triangle t) {
+    protected void layoutStart(Triangle t) {
         Angle a = t.getAngles().get(0);
         Vertex v1 = a.vertex, v2 = a.nextVertex, v3 = a.prevVertex;
         Edge e12 = a.nextEdge, e13 = a.prevEdge, e23 = a.oppositeEdge;
@@ -145,7 +145,7 @@ class Layout implements Runnable {
      * @param e the edge by which the triangle was entered
      * @param t the triangle just entered
      */
-    private void layoutEdge(Edge e, Triangle t) {
+    protected void layoutEdge(Edge e, Triangle t) {
         /* Imagine t is an oriented triangle ABC. We entered the triangle
          * through the unoriented edge [AB], so e is either [AB] or [BA].
          * We want to find the coordinates for C, based on those of A.

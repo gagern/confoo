@@ -71,12 +71,61 @@ class HypEdgePos {
         }
     }
 
+    public HypEdgePos derive(Vertex v, double len) {
+        if (this.v == null)
+            throw new IllegalStateException("Vertex needs to be set");
+        if (this.v == v)
+            return this;
+        HypEdgePos res = new HypEdgePos();
+        res.assignTransRot(len);
+        res.preConcatenate(this);
+        res.setVertex(v);
+        return res;
+    }
+
+    public HypEdgePos derive(Vertex v, double len, double angle) {
+        HypEdgePos res = new HypEdgePos();
+        res.assignRotation(angle);
+        res.preConcatenate(derive(v, len));
+        res.setVertex(v);
+        return res;
+    }
+
+    /**
+     * Makes this transformation a translation transformation.
+     * This transformation is set to the following transformation:
+     * <pre>
+     *      / exp(d)+1  exp(d)-1 \
+     * Td = |                    |
+     *      \ exp(d)-1  exp(d)+1 /
+     * </pre>
+     * which describes a translation along the real axis by the distance d
+     * @param d the translation distance
+     * @return a reference to this transformation
+     */
     public HypEdgePos assignTranslation(double d) {
 	if (Double.isInfinite(d))
 	    assign(d > 0 ? 1. : -1., 0., 1., 0.);
 	else
 	    assign(Math.expm1(d), 0., Math.exp(d) + 1., 0.);
         normalize();
+	return this;
+    }
+
+    /**
+     * Makes this transformation a rotation transformation.
+     * This transformation is set to the following transformation:
+     * <pre>
+     *      / exp(i*&phi;/2)     0        \
+     * R&phi; = |                         |
+     *      \    0        exp(-i*&phi;/2) /
+     * </pre>
+     * @param phi the angle of rotation
+     * @return a reference to this transformation
+     */
+    public HypEdgePos assignRotation(double phi) {
+        double arg = phi/-2.;
+        assign(0., 0., Math.cos(arg), Math.sin(arg));
 	return this;
     }
 
@@ -87,10 +136,6 @@ class HypEdgePos {
 	    assign(0., Math.expm1(d), 0., Math.exp(d) + 1.);
         normalize();
 	return this;
-    }
-
-    public static HypEdgePos getTransRot(double d) {
-        return (new HypEdgePos()).assignTransRot(d);
     }
 
 }

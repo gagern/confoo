@@ -143,6 +143,16 @@ class Edge {
         return ((Double)direction).doubleValue();
     }
 
+    public HypEdgePos offerHypPos(HypEdgePos pos) {
+        if (direction == null)
+            direction = pos;
+        return (HypEdgePos)direction;
+    }
+
+    public HypEdgePos getHypPos() {
+        return (HypEdgePos)direction;
+    }
+
     /**
      * Format edge using the string representations of the underlying
      * vertex representations in the original input mesh.
