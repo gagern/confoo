@@ -53,6 +53,17 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
      */
     private double angleErrorBound = 2e-14;
 
+    /**
+     * Geometry of the input mesh.
+     */
+    private Geometry inGeometry = Geometry.EUCLIDEAN;
+
+    /**
+     * Geometry of the output mesh.
+     */
+    private Geometry outGeometry = Geometry.EUCLIDEAN;
+
+
     /*********************************************************************
      * Costruction
      ********************************************************************/
@@ -135,6 +146,65 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
         boundaryCondition = new IsometricBoundaryCondition();
     }
 
+    /**
+     * Get the currently configured geometry of the input mesh.
+     * @since 1.1
+     * @see #setInputGeometry
+     * @see #getOutputGeometry
+     */
+    public Geometry getInputGeometry() {
+        return inGeometry;
+    }
+
+    /**
+     * Set the geometry of the input mesh.
+     * @since 1.1
+     * @throws UnsupportedOperationException if the geometry is neither
+     *         <code>EUCLIDEAN</code> nor <code>HYPERBOLIC</code>
+     * @see #getInputGeometry
+     * @see #setOutputGeometry
+     */
+    public void setInputGeometry(Geometry inputGeometry) {
+        switch (inputGeometry) {
+        case EUCLIDEAN:
+        case HYPERBOLIC:
+            inGeometry = inputGeometry;
+        default:
+            throw new UnsupportedOperationException("Input geometry " +
+                inputGeometry + " not supported yet");
+        }
+    }
+
+    /**
+     * Get the currently configured geometry of the output mesh.
+     * @since 1.1
+     * @see #setOutputGeometry
+     * @see #getInputGeometry
+     */
+    public Geometry getOutputGeometry() {
+        return outGeometry;
+    }
+
+    /**
+     * Set the geometry of the output mesh.
+     * @since 1.1
+     * @throws UnsupportedOperationException if the geometry is neither
+     *         <code>EUCLIDEAN</code> nor <code>HYPERBOLIC</code>
+     * @see #getOutputGeometry
+     * @see #setInputGeometry
+     */
+    public void setOutputGeometry(Geometry outputGeometry) {
+        switch (outputGeometry) {
+        case EUCLIDEAN:
+        case HYPERBOLIC:
+            outGeometry = outputGeometry;
+        default:
+            throw new UnsupportedOperationException("Output geometry " +
+                outputGeometry + " not supported yet");
+        }
+    }
+
+
     /*********************************************************************
      * Calculate conformal mapping
      ********************************************************************/
@@ -187,7 +257,7 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
      */
     private void lengths() throws MeshException {
         logger.debug("Optimizing edge lengths");
-        Energy energy = new Energy(mesh);
+        Energy energy = createEnergy();
         Newton newton = Newton.getInstance(energy);
         configureNewton(newton);
         try {
@@ -231,7 +301,7 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
      */
     private void layout() throws MeshException {
         logger.debug("Creating layout");
-        Layout layout = new Layout(mesh);
+        Layout layout = createLayout();
         layout.layout();
     }
 
@@ -305,6 +375,34 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
         if (meshE == null) return;
         meshException = null;
         throw meshE;
+    }
+
+    /*********************************************************************
+     * Geometry-specific object factories
+     ********************************************************************/
+
+    private Energy createEnergy() {
+        switch (outGeometry) {
+        case EUCLIDEAN:
+            return new Energy(mesh);
+        case HYPERBOLIC:
+            return new HypEnergy(mesh);
+        default:
+            // should have been prevented by setOutputGeometry
+            throw new IllegalStateException();
+        }
+    }
+
+    private Layout createLayout() {
+        switch (outGeometry) {
+        case EUCLIDEAN:
+            return new Layout(mesh);
+        case HYPERBOLIC:
+            return new HypLayout(mesh);
+        default:
+            // should have been prevented by setOutputGeometry
+            throw new IllegalStateException();
+        }
     }
 
     /*********************************************************************
