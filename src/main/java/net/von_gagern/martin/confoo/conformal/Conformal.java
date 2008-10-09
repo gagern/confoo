@@ -2,6 +2,7 @@ package net.von_gagern.martin.confoo.conformal;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
+import net.von_gagern.martin.confoo.mesh.CorneredTriangle;
 import net.von_gagern.martin.confoo.mesh.LocatedMesh;
 import net.von_gagern.martin.confoo.mesh.MeshException;
 import net.von_gagern.martin.confoo.mesh.MetricMesh;
@@ -62,6 +63,11 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
      * Geometry of the output mesh.
      */
     private Geometry outGeometry = Geometry.EUCLIDEAN;
+
+    /**
+     * Start triangle for layout process.
+     */
+    private Triangle layoutStart;
 
 
     /*********************************************************************
@@ -204,6 +210,35 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
         }
     }
 
+    /**
+     * Set the triangle to be layed out first.
+     *
+     * This triangle should be chosen to be pretty much in the center
+     * of the mesh, as errors increase with distance from this center.
+     * If not set, or set to <code>null</code>, a central triangle is
+     * automatically determined.
+     *
+     * @param start the triangle first to be layed out
+     * @since 1.1
+     */
+    public void setLayoutStartTriangle(CorneredTriangle<? extends V> start) {
+        layoutStart = null;
+        if (start == null) return;
+        for (Triangle t: mesh.getTriangles()) {
+            ROTATIONS: for (int rotation = 0; rotation < 3; ++rotation) {
+                for (int corner = 0; corner < 3; ++corner) {
+                    if (!start.getCorner((corner + rotation)%3)
+                        .equals(t.getCorner(corner).rep))
+                        continue ROTATIONS;
+                }
+                // rotation matches completely
+                layoutStart = t;
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Not a triangle of the mesh");
+    }
+
 
     /*********************************************************************
      * Calculate conformal mapping
@@ -323,6 +358,8 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
     private void layout() throws MeshException {
         logger.debug("Creating layout");
         Layout layout = createLayout();
+        if (layoutStart != null)
+            layout.setStartTriangle(layoutStart);
         layout.layout();
     }
 

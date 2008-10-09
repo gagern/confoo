@@ -25,12 +25,25 @@ class Layout implements Runnable {
     private final List<Triangle> triangles;
 
     /**
+     * The central triangle to layout first.
+     */
+    private Triangle startTriangle;
+
+    /**
      * Construct layouter for given mesh.
      * @param mesh the mesh to be layed out.
      * @see #layout()
      */
     public Layout(InternalMesh mesh) {
         triangles = mesh.getTriangles();
+    }
+
+    /**
+     * Set the triangle to be layed out first.
+     * @param start The first triangle to layout
+     */
+    public void setStartTriangle(Triangle start) {
+        startTriangle = start;
     }
 
     /**
@@ -41,10 +54,10 @@ class Layout implements Runnable {
         // Sadly ArrayDeque was added only in java 1.6, so we won't use it yet
         Queue<Triangle> q = new LinkedList<Triangle>();
         clearIterFlags();
-        Triangle start = findStart();
-        logger.debug("Start triangle: " + start);
-        layoutStart(start);
-        q.add(start);
+        if (startTriangle == null) startTriangle = findStart();
+        logger.debug("Start triangle: " + startTriangle);
+        layoutStart(startTriangle);
+        q.add(startTriangle);
         clearIterFlags();
         while (!q.isEmpty()) {
             Triangle t1 = q.remove();
