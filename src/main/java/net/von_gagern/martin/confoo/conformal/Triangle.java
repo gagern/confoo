@@ -71,7 +71,7 @@ class Triangle implements CorneredTriangle<Vertex> {
     /**
      * Get list of all angles.
      * The angles will be ordered such that
-     * <code>getVertices().get(i).vertex()</code> equals
+     * <code>getAngles().get(i).vertex()</code> equals
      * <code>getVertices().get(i)</code>.
      * @return a list of the three angles of the triangle
      */
