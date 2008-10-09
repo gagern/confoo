@@ -42,7 +42,7 @@ class Edge {
     /**
      * Twice the logarithm of the original length.
      */
-    final double origLogLength;
+    double origLogLength;
 
     /**
      * Twice the logarithm of the current length.
@@ -55,11 +55,16 @@ class Edge {
     double length;
 
     /**
-     * The angle of this edge.
-     * This is the angle between the x axis and this edge and is set
-     * during the layout phase.
+     * The direction of this edge.
+     * This value is set during the layout phase.
+     * Its type depends on the underlying geometry.
+     * <dl>
+     * <dt>Euclidean:</dt><dd>The angle between the x axis and this edge</dd>
+     * <dt>Hyperbolic:</dt><dd>The transformation mapping the origin
+     * to v1 and the real axis to the line along this edge</dd>
+     * </dl>
      */
-    double angle = Double.NaN;
+    private Object direction;
 
     /**
      * Construct edge.
@@ -73,8 +78,18 @@ class Edge {
         this.t1 = t1;
         this.t2 = null;
         this.origLength = this.length = length;
-        this.origLogLength = this.logLength = 2*Math.log(length);
+        // lamdas must be initialized once the geometry is known
+        this.origLogLength = this.logLength = Double.NaN;
         assert length > 0: "length must be positive";
+    }
+
+    /**
+     * Set both original and current lamda value.
+     * @param lamda the logarithmic length measure
+     * @since 1.1
+     */
+    void initLamdas(double lamda) {
+        this.origLogLength = this.logLength = lamda;
     }
 
     /**
@@ -125,8 +140,27 @@ class Edge {
      * during the layout phase.
      */
     public void offerAngle(double angle) {
-        if (Double.isNaN(this.angle))
-            this.angle = angle;
+        if (direction == null)
+            direction = Double.valueOf(angle);
+    }
+
+    /**
+     * Get the angle of this edge.
+     * This is the angle between the x axis and this edge and is set
+     * during the layout phase.
+     */
+    public double getAngle() {
+        return ((Double)direction).doubleValue();
+    }
+
+    public HypEdgePos offerHypPos(HypEdgePos pos) {
+        if (direction == null)
+            direction = pos;
+        return (HypEdgePos)direction;
+    }
+
+    public HypEdgePos getHypPos() {
+        return (HypEdgePos)direction;
     }
 
     /**

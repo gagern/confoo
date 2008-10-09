@@ -2,6 +2,7 @@ package net.von_gagern.martin.confoo.conformal;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
+import net.von_gagern.martin.confoo.mesh.CorneredTriangle;
 import net.von_gagern.martin.confoo.mesh.LocatedMesh;
 import net.von_gagern.martin.confoo.mesh.MeshException;
 import net.von_gagern.martin.confoo.mesh.MetricMesh;
@@ -52,6 +53,22 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
      * Bound for the maximum angle error.
      */
     private double angleErrorBound = 2e-14;
+
+    /**
+     * Geometry of the input mesh.
+     */
+    private Geometry inGeometry = Geometry.EUCLIDEAN;
+
+    /**
+     * Geometry of the output mesh.
+     */
+    private Geometry outGeometry = Geometry.EUCLIDEAN;
+
+    /**
+     * Start triangle for layout process.
+     */
+    private Triangle layoutStart;
+
 
     /*********************************************************************
      * Costruction
@@ -135,6 +152,94 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
         boundaryCondition = new IsometricBoundaryCondition();
     }
 
+    /**
+     * Get the currently configured geometry of the input mesh.
+     * @since 1.1
+     * @see #setInputGeometry
+     * @see #getOutputGeometry
+     */
+    public Geometry getInputGeometry() {
+        return inGeometry;
+    }
+
+    /**
+     * Set the geometry of the input mesh.
+     * @since 1.1
+     * @throws UnsupportedOperationException if the geometry is neither
+     *         <code>EUCLIDEAN</code> nor <code>HYPERBOLIC</code>
+     * @see #getInputGeometry
+     * @see #setOutputGeometry
+     */
+    public void setInputGeometry(Geometry inputGeometry) {
+        switch (inputGeometry) {
+        case EUCLIDEAN:
+        case HYPERBOLIC:
+            inGeometry = inputGeometry;
+        default:
+            throw new UnsupportedOperationException("Input geometry " +
+                inputGeometry + " not supported yet");
+        }
+    }
+
+    /**
+     * Get the currently configured geometry of the output mesh.
+     * @since 1.1
+     * @see #setOutputGeometry
+     * @see #getInputGeometry
+     */
+    public Geometry getOutputGeometry() {
+        return outGeometry;
+    }
+
+    /**
+     * Set the geometry of the output mesh.
+     * @since 1.1
+     * @throws UnsupportedOperationException if the geometry is neither
+     *         <code>EUCLIDEAN</code> nor <code>HYPERBOLIC</code>
+     * @see #getOutputGeometry
+     * @see #setInputGeometry
+     */
+    public void setOutputGeometry(Geometry outputGeometry) {
+        switch (outputGeometry) {
+        case EUCLIDEAN:
+        case HYPERBOLIC:
+            outGeometry = outputGeometry;
+        default:
+            throw new UnsupportedOperationException("Output geometry " +
+                outputGeometry + " not supported yet");
+        }
+    }
+
+    /**
+     * Set the triangle to be layed out first.
+     *
+     * This triangle should be chosen to be pretty much in the center
+     * of the mesh, as errors increase with distance from this center.
+     * If not set, or set to <code>null</code>, a central triangle is
+     * automatically determined.
+     *
+     * @param start the triangle first to be layed out
+     * @since 1.1
+     */
+    public void setLayoutStartTriangle(CorneredTriangle<? extends V> start) {
+        layoutStart = null;
+        if (start == null) return;
+        for (Triangle t: mesh.getTriangles()) {
+            ROTATIONS: for (int rotation = 0; rotation < 3; ++rotation) {
+                for (int corner = 0; corner < 3; ++corner) {
+                    if (!start.getCorner((corner + rotation)%3)
+                        .equals(t.getCorner(corner).rep))
+                        continue ROTATIONS;
+                }
+                // rotation matches completely
+                layoutStart = t;
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Not a triangle of the mesh");
+    }
+
+
     /*********************************************************************
      * Calculate conformal mapping
      ********************************************************************/
@@ -159,11 +264,32 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
     public ResultMesh<V> transform()
         throws MeshException, TriangleInequalityException
     {
+        initLamdas();
         boundary();
         lengths();
         triangleInequalities();
         layout();
         return new ResultMesh<V>(mesh);
+    }
+
+    /**
+     * Initialize logarithmic lengths, taking input geometry into account.
+     * @since 1.1
+     */
+    private void initLamdas() {
+        switch (inGeometry) {
+        case EUCLIDEAN:
+            for (Edge e: mesh.getEdges())
+                e.initLamdas(2*Math.log(e.origLength));
+            break;
+        case HYPERBOLIC:
+            for (Edge e: mesh.getEdges())
+                e.initLamdas(2*Math.log(Math.sinh(e.origLength/2)));
+            break;
+        default:
+            // should have been prevented by setInputGeometry
+            throw new IllegalStateException();
+        }
     }
 
     /**
@@ -187,7 +313,7 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
      */
     private void lengths() throws MeshException {
         logger.debug("Optimizing edge lengths");
-        Energy energy = new Energy(mesh);
+        Energy energy = createEnergy();
         Newton newton = Newton.getInstance(energy);
         configureNewton(newton);
         try {
@@ -231,7 +357,9 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
      */
     private void layout() throws MeshException {
         logger.debug("Creating layout");
-        Layout layout = new Layout(mesh);
+        Layout layout = createLayout();
+        if (layoutStart != null)
+            layout.setStartTriangle(layoutStart);
         layout.layout();
     }
 
@@ -305,6 +433,42 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
         if (meshE == null) return;
         meshException = null;
         throw meshE;
+    }
+
+    /*********************************************************************
+     * Geometry-specific object factories
+     ********************************************************************/
+
+    /**
+     * Create energy function.
+     * @return an energy function for the current output geometry
+     */
+    private Energy createEnergy() {
+        switch (outGeometry) {
+        case EUCLIDEAN:
+            return new Energy(mesh);
+        case HYPERBOLIC:
+            return new HypEnergy(mesh);
+        default:
+            // should have been prevented by setOutputGeometry
+            throw new IllegalStateException();
+        }
+    }
+
+    /**
+     * Create layouting object.
+     * @return a layouting object for the current output geometry
+     */
+    private Layout createLayout() {
+        switch (outGeometry) {
+        case EUCLIDEAN:
+            return new Layout(mesh);
+        case HYPERBOLIC:
+            return new HypLayout(mesh);
+        default:
+            // should have been prevented by setOutputGeometry
+            throw new IllegalStateException();
+        }
     }
 
     /*********************************************************************

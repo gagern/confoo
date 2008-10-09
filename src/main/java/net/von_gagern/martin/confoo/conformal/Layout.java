@@ -25,12 +25,25 @@ class Layout implements Runnable {
     private final List<Triangle> triangles;
 
     /**
+     * The central triangle to layout first.
+     */
+    private Triangle startTriangle;
+
+    /**
      * Construct layouter for given mesh.
      * @param mesh the mesh to be layed out.
      * @see #layout()
      */
     public Layout(InternalMesh mesh) {
         triangles = mesh.getTriangles();
+    }
+
+    /**
+     * Set the triangle to be layed out first.
+     * @param start The first triangle to layout
+     */
+    public void setStartTriangle(Triangle start) {
+        startTriangle = start;
     }
 
     /**
@@ -41,10 +54,10 @@ class Layout implements Runnable {
         // Sadly ArrayDeque was added only in java 1.6, so we won't use it yet
         Queue<Triangle> q = new LinkedList<Triangle>();
         clearIterFlags();
-        Triangle start = findStart();
-        logger.debug("Start triangle: " + start);
-        layoutStart(start);
-        q.add(start);
+        if (startTriangle == null) startTriangle = findStart();
+        logger.debug("Start triangle: " + startTriangle);
+        layoutStart(startTriangle);
+        q.add(startTriangle);
         clearIterFlags();
         while (!q.isEmpty()) {
             Triangle t1 = q.remove();
@@ -108,7 +121,7 @@ class Layout implements Runnable {
      * Layout the initial triangle.
      * @param t the first triangle to be layed out
      */
-    private void layoutStart(Triangle t) {
+    protected void layoutStart(Triangle t) {
         Angle a = t.getAngles().get(0);
         Vertex v1 = a.vertex, v2 = a.nextVertex, v3 = a.prevVertex;
         Edge e12 = a.nextEdge, e13 = a.prevEdge, e23 = a.oppositeEdge;
@@ -128,12 +141,12 @@ class Layout implements Runnable {
                      v3.getX() + "," + v3.getY() + ")");
 
         // set angles
-        if (e12.v1 == v1) e12.angle = 0;
-        else e12.angle = Math.PI;
-        if (e13.v1 == v1) e13.angle = alpha;
-        else e13.angle = alpha - Math.PI;
-        if (e23.v1 == v2) e23.angle = Math.PI - beta;
-        else e23.angle = -beta;
+        if (e12.v1 == v1) e12.offerAngle(0);
+        else e12.offerAngle(Math.PI);
+        if (e13.v1 == v1) e13.offerAngle(alpha);
+        else e13.offerAngle(alpha - Math.PI);
+        if (e23.v1 == v2) e23.offerAngle(Math.PI - beta);
+        else e23.offerAngle(-beta);
     }
 
     /**
@@ -145,13 +158,13 @@ class Layout implements Runnable {
      * @param e the edge by which the triangle was entered
      * @param t the triangle just entered
      */
-    private void layoutEdge(Edge e, Triangle t) {
+    protected void layoutEdge(Edge e, Triangle t) {
         /* Imagine t is an oriented triangle ABC. We entered the triangle
          * through the unoriented edge [AB], so e is either [AB] or [BA].
          * We want to find the coordinates for C, based on those of A.
          * Thus we determine the Angle BAC and the edge [AC].
          * Each edge has an associated orientation, but we have to take
-         * care or the orientation of these edges. If both edges point
+         * care of the orientation of these edges. If both edges point
          * towards A or both away from A, we can simply add angles.
          * Otherwise we have to add PI in order to invert orientation.
          */
@@ -161,7 +174,7 @@ class Layout implements Runnable {
         Vertex a = bac.vertex, b = cba.vertex;
         Edge ca = bac.prevEdge, bc = cba.nextEdge;
         double alpha = bac.angle, beta = cba.angle;
-        double abAngle = e.angle;
+        double abAngle = e.getAngle();
 
         double caAngle = edgeAngle(abAngle + alpha, e, ca, a);
         double bcAngle = edgeAngle(abAngle - beta, e, bc, b);
