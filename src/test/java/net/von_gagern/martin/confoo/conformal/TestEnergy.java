@@ -27,6 +27,7 @@ public class TestEnergy extends AbstractTestCase {
     {
         ObjFormat obj = objResource("oneRightIsosceles.obj");
         InternalMesh<Integer> mesh = new InternalMesh<Integer>(obj);
+        for (Edge e: mesh.getEdges()) e.initLamdas(2*Math.log(e.origLength));
         for (Vertex v: mesh.getVertices()) v.target = 60*DEG;
         mesh.getVertexMap().get(2).fixed = true;
         return mesh;

@@ -42,7 +42,7 @@ class Edge {
     /**
      * Twice the logarithm of the original length.
      */
-    final double origLogLength;
+    double origLogLength;
 
     /**
      * Twice the logarithm of the current length.
@@ -78,8 +78,18 @@ class Edge {
         this.t1 = t1;
         this.t2 = null;
         this.origLength = this.length = length;
-        this.origLogLength = this.logLength = 2*Math.log(length);
+        // lamdas must be initialized once the geometry is known
+        this.origLogLength = this.logLength = Double.NaN;
         assert length > 0: "length must be positive";
+    }
+
+    /**
+     * Set both original and current lamda value.
+     * @param lamda the logarithmic length measure
+     * @since 1.1
+     */
+    void initLamdas(double lamda) {
+        this.origLogLength = this.logLength = lamda;
     }
 
     /**

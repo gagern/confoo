@@ -229,11 +229,32 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
     public ResultMesh<V> transform()
         throws MeshException, TriangleInequalityException
     {
+        initLamdas();
         boundary();
         lengths();
         triangleInequalities();
         layout();
         return new ResultMesh<V>(mesh);
+    }
+
+    /**
+     * Initialize logarithmic lengths, taking input geometry into account.
+     * @since 1.1
+     */
+    private void initLamdas() {
+        switch (inGeometry) {
+        case EUCLIDEAN:
+            for (Edge e: mesh.getEdges())
+                e.initLamdas(2*Math.log(e.origLength));
+            break;
+        case HYPERBOLIC:
+            for (Edge e: mesh.getEdges())
+                e.initLamdas(2*Math.log(Math.sinh(e.origLength/2)));
+            break;
+        default:
+            // should have been prevented by setInputGeometry
+            throw new IllegalStateException();
+        }
     }
 
     /**
@@ -381,6 +402,10 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
      * Geometry-specific object factories
      ********************************************************************/
 
+    /**
+     * Create energy function.
+     * @return an energy function for the current output geometry
+     */
     private Energy createEnergy() {
         switch (outGeometry) {
         case EUCLIDEAN:
@@ -393,6 +418,10 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
         }
     }
 
+    /**
+     * Create layouting object.
+     * @return a layouting object for the current output geometry
+     */
     private Layout createLayout() {
         switch (outGeometry) {
         case EUCLIDEAN:
