@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import net.von_gagern.martin.confoo.mesh.CorneredTriangle;
 import net.von_gagern.martin.confoo.mesh.LocatedMesh;
+import org.apache.log4j.Logger;
 
 /**
  * A 2D triangle mesh.<p>
@@ -24,6 +25,8 @@ import net.von_gagern.martin.confoo.mesh.LocatedMesh;
  * @since 1.0
  */
 public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
+
+    private final Logger logger = Logger.getLogger(Mesh2D.class);    
 
     /**
      * List of all mesh triangles.
@@ -202,6 +205,7 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
             PathSegment s = new PathSegment(p1, p2);
             PathSegment s1 = segmentEndpoints.remove(p1);
             PathSegment s2 = segmentEndpoints.remove(p2);
+            logger.trace("Joining " + s + " with " + s1 + " and " + s2);
             boolean completed = false;
             if (s1 != null) s.join(s1, p1);
             else segmentEndpoints.put(p1, s);
@@ -215,8 +219,13 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
         // for now in order to keep compatibility with 1.5.
         GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);
         for (PathSegment s1: completedSegments) {
+            logger.trace("Starting segment at " + s1);
             path.moveTo((float)s1.p1.getX(), (float)s1.p1.getY());
             for (PathSegment s2 = s1.s2; s2 != s1; s2 = s2.s2) {
+                assert s2 != null;
+                assert s2.p1 != null;
+                assert s2.s2 != s2;
+                logger.trace("Continuing segment at " + s2);
                 path.lineTo((float)s2.p1.getX(), (float)s2.p1.getY());
             }
             path.closePath();
@@ -314,6 +323,11 @@ public class Mesh2D implements LocatedMesh<Vertex2D>, Iterable<Triangle2D> {
             if (unionRep != this)
                 unionRep = unionRep.find();
             return unionRep;
+        }
+
+        @Override public String toString() {
+            return "PathSegment[" + p1.getX() + ", " + p1.getY() + "; " +
+                   p2.getX() + ", " + p2.getY() + "]";
         }
 
     }
