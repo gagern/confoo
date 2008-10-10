@@ -175,6 +175,7 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
         case EUCLIDEAN:
         case HYPERBOLIC:
             inGeometry = inputGeometry;
+            break;
         default:
             throw new UnsupportedOperationException("Input geometry " +
                 inputGeometry + " not supported yet");
@@ -204,6 +205,7 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
         case EUCLIDEAN:
         case HYPERBOLIC:
             outGeometry = outputGeometry;
+            break;
         default:
             throw new UnsupportedOperationException("Output geometry " +
                 outputGeometry + " not supported yet");
