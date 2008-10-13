@@ -28,11 +28,16 @@ class FixedBoundaryCurvature<C> extends BoundaryCondition<C> {
 
     public FixedBoundaryCurvature(Map<? extends C, Double> angles,
                                   Map<C, Vertex> vm) {
+        if (angles == null) throw new NullPointerException("null angles");
+        if (vm == null) throw new NullPointerException("null vertex map");
         this.angles = angles;
         this.vm = vm;
     }
 
-    @Override public void setTargets(InternalMesh<C> mesh) {
+    @Override public void setTargets(InternalMesh<C> mesh, Geometry geom)
+        throws NoSuchVertexException
+    {
+
         // initialize target angles
         for (Vertex v: mesh.getVertices()) {
             switch (v.kind) {
@@ -50,12 +55,17 @@ class FixedBoundaryCurvature<C> extends BoundaryCondition<C> {
 
         // honour explicitely set angles
         for (Map.Entry<? extends C, Double> entry: angles.entrySet()) {
-            vm.get(entry.getKey()).target = entry.getValue();
+            Vertex v = vm.get(entry.getKey());
+            if (v == null)
+                throw new NoSuchVertexException(entry.getKey().toString());
+            v.target = entry.getValue();
         }
 
-        // fix a single arbitrary vertex to fix scale:
-        List<Vertex> vs = mesh.getVertices();
-        vs.get(vs.size()/2).fixed = true;
+        if (geom == Geometry.EUCLIDEAN) {
+            // fix a single arbitrary vertex to fix scale:
+            List<Vertex> vs = mesh.getVertices();
+            vs.get(vs.size()/2).fixed = true;
+        }
     }
 
 }

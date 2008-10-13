@@ -75,13 +75,22 @@ class HypLayout extends Layout {
         HypEdgePos abPos = e.getHypPos();
         HypEdgePos caPos = abPos.derive(a, e.length, alpha);
         HypEdgePos bcPos = abPos.derive(b, e.length, -beta);
+        logger.trace("ab = " + abPos);
+        logger.trace("ca = " + caPos);
+        logger.trace("bc = " + bcPos);
         caPos = ca.offerHypPos(caPos);
         bcPos = bc.offerHypPos(bcPos);
+        logger.trace("ca = " + caPos);
+        logger.trace("bc = " + bcPos);
 
         Point2D caC = caPos.derive(c, ca.length).dehomogenize();
         Point2D bcC = bcPos.derive(c, bc.length).dehomogenize();
         double x = (caC.getX() + bcC.getX())/2;
         double y = (caC.getY() + bcC.getY())/2;
+        assert !Double.isNaN(x): "x must not be NaN";
+        assert !Double.isNaN(y): "y must not be NaN";
+        assert !Double.isInfinite(x): "x must be finite";
+        assert !Double.isInfinite(y): "y must be finite";
         c.offerLocation(x, y);
         logger.trace("layoutEdge(" + e + ", " + t + ") set " + c +
                      " to (" + x + ", " + y + ")");

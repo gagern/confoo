@@ -15,6 +15,7 @@ class HypEdgePos {
     private double d;
 
     public HypEdgePos() {
+        assign(0, 0, 1, 0);
     }
 
     public HypEdgePos(double a, double b, double c, double d) {
@@ -136,6 +137,10 @@ class HypEdgePos {
 	    assign(0., Math.expm1(d), 0., Math.exp(d) + 1.);
         normalize();
 	return this;
+    }
+
+    @Override public String toString() {
+        return "HypEdgePos[" + a + " + " + b + "i, " + c + " + " + d + "i]";
     }
 
 }

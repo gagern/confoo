@@ -17,10 +17,12 @@ abstract class BoundaryCondition<C> {
     /**
      * Set target angles and fixed vertices.
      * @param mesh the mesh to work upon
+     * @param geom the requested output geometry
      * @see Vertex#setTarget(double)
      * @see Vertex#setFixed(boolean)
      */
-    public abstract void setTargets(InternalMesh<C> mesh) throws MeshException;
+    public abstract void setTargets(InternalMesh<C> mesh, Geometry geom)
+        throws MeshException;
 
     /**
      * Return whether this boundary condition fixes an absolute

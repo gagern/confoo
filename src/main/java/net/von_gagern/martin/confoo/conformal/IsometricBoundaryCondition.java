@@ -12,7 +12,10 @@ package net.von_gagern.martin.confoo.conformal;
  */
 class IsometricBoundaryCondition<C> extends BoundaryCondition<C> {
 
-    @Override public void setTargets(InternalMesh<C> mesh) {
+    @Override public void setTargets(InternalMesh<C> mesh, Geometry geom) {
+        if (geom != Geometry.EUCLIDEAN)
+            throw new IllegalStateException
+                ("Isoemtric boundary condition only for euclidean output.");
         for (Vertex v: mesh.getVertices()) {
             switch (v.kind) {
             case CORNER:
@@ -24,6 +27,7 @@ class IsometricBoundaryCondition<C> extends BoundaryCondition<C> {
                 break;
             }
         }
+
     }
 
     @Override public boolean fixedScale() {

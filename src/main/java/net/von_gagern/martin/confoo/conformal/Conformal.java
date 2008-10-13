@@ -262,9 +262,12 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
      * @throws MeshException if the input mesh is malformed or too degenerate
      * @throws TriangleInequalityException if the result would violate
      *         the triangle inequality
+     * @throws NoSuchVertexException if a part of the boundary condition
+     *         doesn't apply
      */
     public ResultMesh<V> transform()
-        throws MeshException, TriangleInequalityException
+        throws MeshException, TriangleInequalityException,
+               NoSuchVertexException
     {
         initLamdas();
         boundary();
@@ -298,12 +301,14 @@ public class Conformal<V> implements Callable<ResultMesh<V>> {
      * Apply boundary condition.
      * @throws IllegalStateException if no boundary condition was set
      * @throws MeshException if the boundary condition throws this exception
+     * @throws NoSuchVertexException if a part of the boundary condition
+     *         doesn't apply
      */
-    private void boundary() throws MeshException {
+    private void boundary() throws MeshException, NoSuchVertexException {
         logger.debug("Assigning boundary conditions");
         if (boundaryCondition == null)
             throw new IllegalStateException("No boundary condition set");
-        boundaryCondition.setTargets(mesh);
+        boundaryCondition.setTargets(mesh, outGeometry);
     }
 
     /**
