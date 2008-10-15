@@ -99,10 +99,11 @@ class HypEnergy extends Energy {
                            a.nextAngle.nextAngle.angle)/2.;
             double l = a.oppositeEdge.length;
             double cot = Math.cos(beta)/Math.sin(beta);
+            double cot2 = cot/2;
             double tanh = Math.tanh(l/2);
             double tanhSq = tanh*tanh;
-            double diag = cot*(tanhSq + 1);
-            double nonDiag = cot*(tanhSq - 1);
+            double diag = cot2*(tanhSq + 1);
+            double nonDiag = cot2*(tanhSq - 1);
             int i = a.nextVertex.index;
             int j = a.prevVertex.index;
             if (i >= 0)
