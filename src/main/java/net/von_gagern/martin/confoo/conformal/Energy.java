@@ -298,22 +298,19 @@ class Energy implements Functional {
      * @return terms whose sum make up the function value
      */
     protected double[] valueTerms() {
-        double[] terms = new double[angles.size() + vertices.size()];
+        double[] terms = new double[3*angles.size() + vertices.size()];
         int nterms = 0;
         for (Angle a: angles) {
             double alpha = a.angle;
             double lamda = a.oppositeEdge.logLength;
             double cl2 = Clausen.cl2(2*alpha);
             double u = a.vertex.u;
-            double term = alpha*lamda + cl2 - Math.PI*u;
-            assert !Double.isInfinite(term): "infinite term in value";
-            assert !Double.isNaN(term): "NaN term in value";
-            terms[nterms++] = term;
+            terms[nterms++] = alpha*lamda;
+            terms[nterms++] = cl2;
+            terms[nterms++] = -Math.PI*u;
         }
         for (Vertex v: vertices) {
             double term = v.target*v.u;
-            assert !Double.isInfinite(term): "infinite term in value";
-            assert !Double.isNaN(term): "NaN term in value";
             terms[nterms++] = term;
         }
         assert nterms == terms.length: "Wrong number of terms";
