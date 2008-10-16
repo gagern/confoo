@@ -136,8 +136,8 @@ class Energy implements Functional {
      */
     public double value() {
         double[] terms = valueTerms();
-        lastValueTerms = (double[])terms.clone();
         oldValue = preciseSum(terms);
+        lastValueTerms = terms;
         return oldValue;
     }
 
@@ -148,10 +148,11 @@ class Energy implements Functional {
     public double valueChange() {
         // For evaluation purposes we still give the results of both
         // the precise and the dumb calculation of value difference.
-        // TODO: For performance this should be cleaned up at some
-        // point in the future.
         double[] terms = valueTerms();
-        double simpleChange = preciseSum((double[])terms.clone()) - oldValue;
+        Arrays.sort(terms);
+        double simpleChange = Double.NaN;
+        if (logger.isDebugEnabled())
+            simpleChange = preciseSum(terms) - oldValue;
         for (int i = 0; i < terms.length; ++i)
             terms[i] -= lastValueTerms[i];
         double preciseChange = preciseSum(terms);
