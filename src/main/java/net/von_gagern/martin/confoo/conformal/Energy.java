@@ -322,7 +322,7 @@ class Energy implements Functional {
 
     /**
      * Calculate sum of an array of terms in a clever way.
-     * The sum is calculates in such a way as to keep errors for lack
+     * The sum is calculated in such a way as to keep errors for lack
      * of precision low and have large terms cancel each other early
      * on. The parameter array will be modified (i.e. sorted).
      * @param terms the terms to sum over
